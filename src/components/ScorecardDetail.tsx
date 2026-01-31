@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Text } from 'ink';
 import type { PlayerScorecard, RoundScorecard, HoleScore } from '../api/types.js';
 import { Spinner } from './Spinner.js';
-import { LiveIndicator } from './LiveIndicator.js';
 import { useBlink } from '../hooks/useBlink.js';
 
 interface ScorecardDetailProps {
@@ -125,11 +124,6 @@ function RoundCard({ round, playerName, currentHole, blinkVisible }: { round: Ro
       <Box justifyContent="space-between" marginBottom={1}>
         <Text bold color="cyan">{playerName} - Round {round.round}</Text>
         <Box>
-          {isLive && (
-            <Box marginRight={2}>
-              <LiveIndicator />
-            </Box>
-          )}
           <Text bold>
             {formatToPar(round.toPar)}
             <Text dimColor> ({round.totalStrokes ?? '-'}{isLive ? '*' : ''})</Text>
@@ -206,6 +200,7 @@ export function ScorecardDetail({ scorecard, isLoading, error, selectedRound }: 
           const isSelected = r === selectedRound;
           const roundData = scorecard.rounds.find(rd => rd.round === r);
           const isComplete = roundData?.isComplete;
+          const hasStarted = roundData && roundData.holes.length > 0;
 
           return (
             <Box key={r} marginRight={2}>
@@ -216,7 +211,7 @@ export function ScorecardDetail({ scorecard, isLoading, error, selectedRound }: 
               >
                 [{r}] Round {r}
                 {isSelected && hasData ? '*' : ''}
-                {hasData && !isComplete ? ' (in progress)' : ''}
+                {hasData && !isComplete ? (hasStarted ? ' (in progress)' : ' (not started)') : ''}
               </Text>
             </Box>
           );
