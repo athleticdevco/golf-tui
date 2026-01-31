@@ -21,8 +21,8 @@ export function getThemeColors(): ThemeColors {
 }
 
 export function getScoreColor(score: number): string {
-  if (score < 0) return 'green';
-  if (score > 0) return 'red';
+  if (score < 0) return 'red';
+  if (score > 0) return 'green';
   return 'white';
 }
 

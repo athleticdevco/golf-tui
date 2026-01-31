@@ -86,10 +86,9 @@ export function Leaderboard({ leaderboard, isLoading, error, selectedIndex, tour
         <Text dimColor>{'POS'.padStart(4)}</Text>
         <Text dimColor> </Text>
         <Text dimColor>{'PLAYER'.padEnd(24)}</Text>
-        <Text dimColor>{'TOTAL'.padStart(5)}</Text>
-        <Text dimColor>{'TODAY'.padStart(6)}</Text>
-        <Text dimColor>{'THRU'.padStart(4)}</Text>
-        <Text dimColor>{'   '}</Text>
+        <Text dimColor>{'TOTAL'.padStart(6)}</Text>
+        <Text dimColor>{'TODAY'.padStart(7)}</Text>
+        <Text dimColor>{'THRU'.padStart(5)}</Text>
         {showRounds && (
           <>
             <Text dimColor> │</Text>

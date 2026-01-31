@@ -19,7 +19,7 @@ Real-time tournament scores from PGA Tour, LPGA, DP World Tour, and Champions To
 ![Leaderboard](screenshots/leaderboard.png)
 
 ### Hole-by-Hole Scorecards
-Detailed scorecards with eagle, birdie, and bogey indicators.
+Detailed scorecards with red highlighting for birdies and eagles.
 
 ![Scorecard](screenshots/scorecard.png)
 

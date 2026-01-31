@@ -4,7 +4,6 @@ import type { PlayerScorecard, RoundScorecard, HoleScore } from '../api/types.js
 import { Spinner } from './Spinner.js';
 import { LiveIndicator } from './LiveIndicator.js';
 import { useBlink } from '../hooks/useBlink.js';
-import { getScoreSymbol } from '../utils/theme.js';
 
 interface ScorecardDetailProps {
   scorecard: PlayerScorecard | null;
@@ -20,9 +19,7 @@ function formatToPar(toPar: number | null): string {
 }
 
 function getScoreColor(toPar: number): string {
-  if (toPar < 0) return 'green';
-  if (toPar > 0) return 'red';
-  return 'white';
+  return toPar < 0 ? 'red' : 'white';
 }
 
 function EighteenHoleCard({
@@ -86,7 +83,6 @@ function EighteenHoleCard({
         {[1,2,3,4,5,6,7,8,9].map(h => {
           const hole = frontNine.find(ho => ho.holeNumber === h);
           const isCurrentHole = currentHole === h;
-          const scoreSymbol = hole ? getScoreSymbol(hole.toPar) : null;
 
           if (isCurrentHole && !hole) {
             return <Box key={h} width={cellWidth} justifyContent="center"><Text color="yellow">{blinkVisible ? '·' : ' '}</Text></Box>;
@@ -95,7 +91,6 @@ function EighteenHoleCard({
           return (
             <Box key={h} width={cellWidth} justifyContent="center">
               <Text color={hole ? getScoreColor(hole.toPar) : 'white'}>{hole ? hole.strokes : '-'}</Text>
-              {scoreSymbol && <Text color={scoreSymbol.color}>{scoreSymbol.symbol.charAt(0)}</Text>}
             </Box>
           );
         })}
@@ -103,7 +98,6 @@ function EighteenHoleCard({
         {[10,11,12,13,14,15,16,17,18].map(h => {
           const hole = backNine.find(ho => ho.holeNumber === h);
           const isCurrentHole = currentHole === h;
-          const scoreSymbol = hole ? getScoreSymbol(hole.toPar) : null;
 
           if (isCurrentHole && !hole) {
             return <Box key={h} width={cellWidth} justifyContent="center"><Text color="yellow">{blinkVisible ? '·' : ' '}</Text></Box>;
@@ -112,7 +106,6 @@ function EighteenHoleCard({
           return (
             <Box key={h} width={cellWidth} justifyContent="center">
               <Text color={hole ? getScoreColor(hole.toPar) : 'white'}>{hole ? hole.strokes : '-'}</Text>
-              {scoreSymbol && <Text color={scoreSymbol.color}>{scoreSymbol.symbol.charAt(0)}</Text>}
             </Box>
           );
         })}
@@ -138,9 +131,7 @@ function RoundCard({ round, playerName, currentHole, blinkVisible }: { round: Ro
             </Box>
           )}
           <Text bold>
-            <Text color={round.toPar !== null && round.toPar < 0 ? 'green' : round.toPar !== null && round.toPar > 0 ? 'red' : 'white'}>
-              {formatToPar(round.toPar)}
-            </Text>
+            {formatToPar(round.toPar)}
             <Text dimColor> ({round.totalStrokes ?? '-'}{isLive ? '*' : ''})</Text>
           </Text>
         </Box>
