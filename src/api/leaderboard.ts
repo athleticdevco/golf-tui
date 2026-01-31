@@ -77,6 +77,7 @@ interface ESPNLinescore {
   value?: number;
   displayValue?: string;
   period?: number;
+  linescores?: { period?: number }[];  // Nested hole-by-hole scores
 }
 
 function parseScore(scoreStr: string | undefined): number {
@@ -153,8 +154,12 @@ export async function fetchEventLeaderboard(eventId: string, eventName: string, 
         const todayStr = todayLinescore?.displayValue || (rounds.length > 0 ? rounds[rounds.length - 1] : '-');
         const todayNum = parseScore(todayStr);
         
-        const isRoundComplete = rounds.length >= currentRound && todayStr !== '-';
-        const thruStr = isRoundComplete ? 'F' : '-';
+        // Thru - count holes played from current round's nested linescores
+        const currentRoundLinescore = roundLinescores.find(ls => ls.period === currentRound);
+        const holesPlayed = currentRoundLinescore?.linescores?.length || 0;
+        const thruStr = holesPlayed >= 18 ? 'F'
+                      : holesPlayed > 0 ? String(holesPlayed)
+                      : '-';
 
         return {
           player,
@@ -247,9 +252,12 @@ export async function fetchLeaderboard(tour: Tour): Promise<Leaderboard | null> 
         const todayStr = todayLinescore?.displayValue || (rounds.length > 0 ? rounds[rounds.length - 1] : '-');
         const todayNum = parseScore(todayStr);
         
-        // Thru - show F if round complete, otherwise show in progress
-        const isRoundComplete = rounds.length >= currentRound && todayStr !== '-';
-        const thruStr = isRoundComplete ? 'F' : '-';
+        // Thru - count holes played from current round's nested linescores
+        const currentRoundLinescore = roundLinescores.find(ls => ls.period === currentRound);
+        const holesPlayed = currentRoundLinescore?.linescores?.length || 0;
+        const thruStr = holesPlayed >= 18 ? 'F'
+                      : holesPlayed > 0 ? String(holesPlayed)
+                      : '-';
 
         let entryStatus: 'active' | 'cut' | 'wd' | 'dq' = 'active';
         const statusVal = comp.status?.displayValue?.toLowerCase() || '';
