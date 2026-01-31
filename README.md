@@ -92,10 +92,6 @@ This app uses ESPN's public (undocumented) API for live golf data. Special thank
 
 **Note:** This is an unofficial app and is not affiliated with ESPN. Data is provided for personal use only.
 
-## Built With
-
-This project was built with [Factory's Droid](https://factory.ai) - an AI software engineering agent.
-
 ## License
 
 MIT
