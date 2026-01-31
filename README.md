@@ -14,10 +14,18 @@ A beautiful terminal UI for live golf leaderboards and player stats.
 ## Features
 
 - **Live Leaderboards** - Real-time tournament scores from PGA Tour, LPGA, DP World Tour, and Champions Tour
+- **Hole-by-Hole Scorecards** - Detailed scorecards with eagle, birdie, and bogey indicators
 - **Player Profiles** - Detailed stats including scoring average, driving distance, greens hit, and recent results
 - **Tournament History** - Drill into any past tournament to see the full leaderboard
 - **Player Search** - Search for any golfer, whether they're playing this week or not
+- **Breadcrumb Navigation** - Tab through the navigation path to quickly jump between views
 - **Keyboard Navigation** - Fast, vim-style navigation throughout
+
+## Screenshots
+
+![Leaderboard](screenshots/leaderboard.png)
+![Scorecard](screenshots/scorecard.png)
+![Player Profile](screenshots/player.png)
 
 ## Installation
 
@@ -51,10 +59,18 @@ golf
 | `j` / `↓` | Move down |
 | `k` / `↑` | Move up |
 | `Enter` | View player profile |
+| `c` | View player scorecard |
 | `Tab` | Switch tour (PGA → LPGA → DP World → Champions) |
 | `s` | Search players |
 | `r` | Refresh data |
 | `q` | Quit |
+
+### Scorecard View
+| Key | Action |
+|-----|--------|
+| `1-4` | Switch round |
+| `Tab` | Navigate breadcrumb |
+| `Esc` | Go back |
 
 ### Player Profile
 | Key | Action |
@@ -62,6 +78,17 @@ golf
 | `j` / `↓` | Navigate recent results |
 | `k` / `↑` | Navigate recent results |
 | `Enter` | View tournament leaderboard |
+| `Tab` | Navigate breadcrumb |
+| `Esc` | Go back |
+
+### Event Leaderboard
+| Key | Action |
+|-----|--------|
+| `j` / `↓` | Move down |
+| `k` / `↑` | Move up |
+| `Enter` | View player profile |
+| `c` | View player scorecard |
+| `Tab` | Navigate breadcrumb |
 | `Esc` | Go back |
 
 ### Search
