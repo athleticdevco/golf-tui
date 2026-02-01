@@ -1,4 +1,4 @@
-import type { PlayerProfile, LeaderboardEntry, TournamentResult, PlayerStat } from './types.js';
+import type { PlayerProfile, LeaderboardEntry, TournamentResult, PlayerStat, Tour } from './types.js';
 
 interface ESPNOverviewResponse {
   statistics?: {
@@ -40,7 +40,7 @@ interface ESPNEventStat {
   }[];
 }
 
-async function fetchRecentTournamentResults(playerId: string): Promise<TournamentResult[]> {
+async function fetchRecentTournamentResults(playerId: string, tour: Tour): Promise<TournamentResult[]> {
   // Fetch results from recent scoreboard data (more current than overview endpoint)
   const results: TournamentResult[] = [];
   
@@ -57,7 +57,7 @@ async function fetchRecentTournamentResults(playerId: string): Promise<Tournamen
     // Fetch scoreboards for each date in parallel
     const responses = await Promise.all(
       dates.map(date => 
-        fetch(`https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard?dates=${date}`)
+        fetch(`https://site.api.espn.com/apis/site/v2/sports/golf/${tour}/scoreboard?dates=${date}`)
           .then(r => r.ok ? r.json() : null)
           .catch(() => null)
       )
@@ -101,12 +101,12 @@ async function fetchRecentTournamentResults(playerId: string): Promise<Tournamen
   return results;
 }
 
-export async function fetchPlayerProfile(playerId: string, playerName?: string): Promise<PlayerProfile | null> {
+export async function fetchPlayerProfile(playerId: string, playerName?: string, tour: Tour = 'pga'): Promise<PlayerProfile | null> {
   try {
     // Fetch both overview and recent scoreboard data in parallel
     const [overviewResponse, liveResults] = await Promise.all([
-      fetch(`https://site.web.api.espn.com/apis/common/v3/sports/golf/pga/athletes/${playerId}/overview`),
-      fetchRecentTournamentResults(playerId),
+      fetch(`https://site.web.api.espn.com/apis/common/v3/sports/golf/${tour}/athletes/${playerId}/overview`),
+      fetchRecentTournamentResults(playerId, tour),
     ]);
     
     if (!overviewResponse.ok) {
@@ -115,10 +115,11 @@ export async function fetchPlayerProfile(playerId: string, playerName?: string):
 
     const data: ESPNOverviewResponse = await overviewResponse.json();
     
-    // Extract season stats
-    const pgaStats = data.statistics?.splits?.find(s => s.displayName === 'PGA TOUR');
+    // Extract season stats (tour-specific)
+    const tourStatsName = tour === 'pga' ? 'PGA TOUR' : tour === 'lpga' ? 'LPGA' : tour === 'eur' ? 'DP WORLD TOUR' : 'PGA TOUR CHAMPIONS';
+    const tourStats = data.statistics?.splits?.find(s => s.displayName?.toUpperCase().includes(tourStatsName.toUpperCase()));
     const statLabels = data.statistics?.labels || [];
-    const statValues = pgaStats?.stats || [];
+    const statValues = tourStats?.stats || [];
     
     const getStatValue = (label: string): string | undefined => {
       const idx = statLabels.indexOf(label);
@@ -132,7 +133,7 @@ export async function fetchPlayerProfile(playerId: string, playerName?: string):
 
     // Extract recent tournaments from overview (get the tour name for context)
     const recentTourData = data.recentTournaments?.[0];
-    const recentTourName = recentTourData?.name; // e.g. "2026 PGA TOUR" or "2024 PGA TOUR"
+    const recentTourName = recentTourData?.name;
     const recentTournaments = recentTourData?.eventsStats || [];
     const overviewResults: TournamentResult[] = recentTournaments.slice(0, 10).map(event => {
       const competitor = event.competitions?.[0]?.competitors?.[0];
@@ -192,7 +193,7 @@ export async function fetchPlayerProfile(playerId: string, playerName?: string):
       puttsPerGir: hasRecentActivity ? makeStat('pp gir') : undefined,
       birdiesPerRound: hasRecentActivity ? makeStat('bird/rnd') : undefined,
       sandSaves: hasRecentActivity ? makeStat('saves') : undefined,
-      lastSeasonPlayed: liveResults.length > 0 ? '2026 PGA TOUR' : recentTourName,
+      lastSeasonPlayed: recentTourName,
       recentResults: mergedResults,
     };
   } catch (error) {

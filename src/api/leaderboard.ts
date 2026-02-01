@@ -91,10 +91,10 @@ function formatScore(num: number): string {
   return num > 0 ? `+${num}` : `${num}`;
 }
 
-export async function fetchEventLeaderboard(eventId: string, eventName: string, eventDate: string): Promise<Leaderboard | null> {
+export async function fetchEventLeaderboard(eventId: string, eventName: string, eventDate: string, tour: Tour = 'pga'): Promise<Leaderboard | null> {
   try {
     const dateStr = eventDate.slice(0, 10).replace(/-/g, '');
-    const response = await cachedApiRequest<ESPNLeaderboardResponse>(`/pga/scoreboard`, {
+    const response = await cachedApiRequest<ESPNLeaderboardResponse>(`/${tour}/scoreboard`, {
       params: { dates: dateStr }
     });
     
@@ -120,7 +120,7 @@ export async function fetchEventLeaderboard(eventId: string, eventName: string, 
       date: event.date,
       endDate: event.endDate,
       status,
-      tour: 'pga',
+      tour,
     };
 
     const entries: LeaderboardEntry[] = (competition.competitors || [])
@@ -161,6 +161,9 @@ export async function fetchEventLeaderboard(eventId: string, eventName: string, 
                       : holesPlayed > 0 ? String(holesPlayed)
                       : '-';
 
+        // Check if hole-level scorecard data is available
+        const hasHoleData = roundLinescores.some(ls => ls.linescores && ls.linescores.length > 0);
+
         return {
           player,
           position: positionStr,
@@ -172,10 +175,11 @@ export async function fetchEventLeaderboard(eventId: string, eventName: string, 
           thru: thruStr,
           rounds,
           status: 'active',
+          scorecardAvailable: hasHoleData,
         };
       })
       .filter((e): e is LeaderboardEntry => e !== null)
-      .sort((a, b) => a.scoreNum - b.scoreNum);
+      .sort((a, b) => a.positionNum - b.positionNum);
 
     return {
       tournament,
@@ -265,6 +269,9 @@ export async function fetchLeaderboard(tour: Tour): Promise<Leaderboard | null> 
         else if (statusVal.includes('wd')) entryStatus = 'wd';
         else if (statusVal.includes('dq')) entryStatus = 'dq';
 
+        // Check if hole-level scorecard data is available
+        const hasHoleData = roundLinescores.some(ls => ls.linescores && ls.linescores.length > 0);
+
         return {
           player,
           position: positionStr,
@@ -276,10 +283,11 @@ export async function fetchLeaderboard(tour: Tour): Promise<Leaderboard | null> 
           thru: thruStr,
           rounds,
           status: entryStatus,
+          scorecardAvailable: hasHoleData,
         };
       })
       .filter((e): e is LeaderboardEntry => e !== null)
-      .sort((a, b) => a.scoreNum - b.scoreNum);
+      .sort((a, b) => a.positionNum - b.positionNum);
 
     return {
       tournament,

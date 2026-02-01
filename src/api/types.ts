@@ -35,6 +35,7 @@ export interface LeaderboardEntry {
   thru: string;
   rounds: string[];
   status?: 'active' | 'cut' | 'wd' | 'dq';
+  scorecardAvailable?: boolean;
 }
 
 export interface Leaderboard {

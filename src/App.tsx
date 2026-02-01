@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Box, Text, useApp, useInput, Static } from 'ink';
 import type { View, Tour, LeaderboardEntry } from './api/types.js';
 import { fetchEventLeaderboard } from './api/leaderboard.js';
-import { useLeaderboard, useTournaments, usePlayerProfile, useGlobalSearch, useScorecard } from './hooks/index.js';
+import { useLeaderboard, useTournaments, usePlayerProfile, useGlobalSearch, useScorecard, useActiveTours } from './hooks/index.js';
 import {
   Header,
   StatusBar,
@@ -20,7 +20,7 @@ import {
   Breadcrumb,
 } from './components/index.js';
 
-const TOURS: Tour[] = ['pga', 'lpga', 'eur', 'champions-tour'];
+
 
 function searchPlayers(entries: LeaderboardEntry[], query: string): LeaderboardEntry[] {
   const q = query.toLowerCase().trim();
@@ -66,6 +66,7 @@ export function App() {
   const [breadcrumbIndex, setBreadcrumbIndex] = useState<number | null>(null);
 
   // Data hooks
+  const { activeTours } = useActiveTours();
   const { leaderboard, isLoading: leaderboardLoading, error: leaderboardError, refresh } = useLeaderboard(tour);
   const { tournaments, isLoading: tournamentsLoading, error: tournamentsError } = useTournaments(tour);
   const { player, isLoading: playerLoading, error: playerError, loadPlayer, clear: clearPlayer } = usePlayerProfile();
@@ -101,7 +102,7 @@ export function App() {
           : [];
       case 'event-leaderboard':
         return eventLeaderboard && player
-          ? [leaderboard?.tournament.name || 'Tournament', player.name, eventLeaderboard.tournament.name]
+          ? [player.name, eventLeaderboard.tournament.name]
           : [];
       case 'scorecard':
         return leaderboard && scorecard
@@ -165,13 +166,13 @@ export function App() {
     }
   }, []);
 
-  // Cycle to next tour
+  // Cycle to next tour (only active tours)
   const cycleTour = useCallback(() => {
-    const currentIndex = TOURS.indexOf(tour);
-    const nextIndex = (currentIndex + 1) % TOURS.length;
-    setTour(TOURS[nextIndex]);
+    const currentIndex = activeTours.indexOf(tour);
+    const nextIndex = (currentIndex + 1) % activeTours.length;
+    setTour(activeTours[nextIndex]);
     setLeaderboardIndex(0);
-  }, [tour]);
+  }, [tour, activeTours]);
 
   // Navigate to breadcrumb item by index
   const navigateToBreadcrumb = useCallback((index: number) => {
@@ -202,7 +203,7 @@ export function App() {
             // Find the player in leaderboard entries
             const entry = leaderboard?.entries.find(e => e.player.name === scorecard.playerName);
             if (entry) {
-              loadPlayer(entry.player.id, entry.player.name);
+              loadPlayer(entry.player.id, entry.player.name, tour);
             }
           }
           setView('player');
@@ -213,16 +214,12 @@ export function App() {
         break;
       case 'event-leaderboard':
         if (index === 0) {
-          setView('leaderboard');
-          setEventLeaderboard(null);
-          setEventIndex(0);
-          clearPlayer();
-          setPlayerResultIndex(0);
-        } else if (index === 1) {
+          // Go back to player view
           setView('player');
           setEventLeaderboard(null);
           setEventIndex(0);
         }
+        // index === 1 is the current event, stay here
         break;
     }
     setBreadcrumbIndex(null);
@@ -294,7 +291,7 @@ export function App() {
           if (hasLeaderboardResults) {
             const entry = leaderboardSearchResults[searchIndex];
             if (entry) {
-              loadPlayer(entry.player.id, entry.player.name);
+              loadPlayer(entry.player.id, entry.player.name, tour);
               setView('player');
               setIsSearchFocused(false);
               setCommandInput('');
@@ -303,7 +300,7 @@ export function App() {
           } else {
             const player = globalSearchResults[searchIndex];
             if (player) {
-              loadPlayer(player.id, player.name);
+              loadPlayer(player.id, player.name, tour);
               setView('player');
               setIsSearchFocused(false);
               setCommandInput('');
@@ -366,7 +363,7 @@ export function App() {
         if (result) {
           setEventLoading(true);
           setView('event-leaderboard');
-          fetchEventLeaderboard(result.tournamentId, result.tournamentName, result.date)
+          fetchEventLeaderboard(result.tournamentId, result.tournamentName, result.date, tour)
             .then(lb => {
               setEventLeaderboard(lb);
               setEventLoading(false);
@@ -392,7 +389,7 @@ export function App() {
       if (key.return) {
         const entry = eventLeaderboard.entries[eventIndex];
         if (entry) {
-          loadPlayer(entry.player.id, entry.player.name);
+          loadPlayer(entry.player.id, entry.player.name, tour);
           setView('player');
           setPlayerResultIndex(0);
         }
@@ -415,7 +412,8 @@ export function App() {
 
       if (currentLeaderboard) {
         const entry = currentLeaderboard.entries[currentIndex];
-        if (entry) {
+        // Only open scorecard if data is available
+        if (entry && entry.scorecardAvailable !== false) {
           loadScorecard(
             currentLeaderboard.tournament.id,
             entry.player.id,
@@ -474,7 +472,7 @@ export function App() {
       if (key.return) {
         const entry = leaderboard.entries[leaderboardIndex];
         if (entry) {
-          loadPlayer(entry.player.id, entry.player.name);
+          loadPlayer(entry.player.id, entry.player.name, tour);
           setView('player');
         }
         return;
@@ -628,6 +626,14 @@ export function App() {
           view={view}
           tour={tour}
           isSearchFocused={isSearchFocused}
+          scorecardAvailable={
+            view === 'leaderboard' 
+              ? leaderboard?.entries[leaderboardIndex]?.scorecardAvailable
+              : view === 'event-leaderboard'
+              ? eventLeaderboard?.entries[eventIndex]?.scorecardAvailable
+              : true
+          }
+          activeTours={activeTours}
         />
       )}
     </Box>

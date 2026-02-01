@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
 import { fetchPlayerProfile } from '../api/players.js';
-import type { PlayerProfile } from '../api/types.js';
+import type { PlayerProfile, Tour } from '../api/types.js';
 
 interface UsePlayerProfileResult {
   player: PlayerProfile | null;
   isLoading: boolean;
   error: string | null;
-  loadPlayer: (playerId: string, playerName?: string) => void;
+  loadPlayer: (playerId: string, playerName?: string, tour?: Tour) => void;
   clear: () => void;
 }
 
@@ -15,12 +15,12 @@ export function usePlayerProfile(): UsePlayerProfileResult {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadPlayer = useCallback(async (playerId: string, playerName?: string) => {
+  const loadPlayer = useCallback(async (playerId: string, playerName?: string, tour: Tour = 'pga') => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const data = await fetchPlayerProfile(playerId, playerName);
+      const data = await fetchPlayerProfile(playerId, playerName, tour);
       setPlayer(data);
       if (!data) {
         setError('Player not found');
