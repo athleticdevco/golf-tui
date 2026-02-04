@@ -10,6 +10,8 @@ interface Command {
 export const COMMANDS: Command[] = [
   { name: 'leaderboard', description: 'View live tournament leaderboard', shortcut: 'l' },
   { name: 'schedule', description: 'View tournament schedule', shortcut: 's' },
+  { name: 'players', description: 'Search and browse players', shortcut: 'p' },
+  { name: 'stats', description: 'View player stats', shortcut: 't' },
   { name: 'pga', description: 'Switch to PGA Tour' },
   { name: 'lpga', description: 'Switch to LPGA Tour' },
   { name: 'eur', description: 'Switch to DP World Tour' },

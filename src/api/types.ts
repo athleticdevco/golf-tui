@@ -100,7 +100,16 @@ export interface PlayerScorecard {
   rounds: RoundScorecard[];
 }
 
-export type View = 'leaderboard' | 'schedule' | 'player' | 'help' | 'event-leaderboard' | 'stat-leaders' | 'scorecard';
+export type View =
+  | 'leaderboard'
+  | 'schedule'
+  | 'players'
+  | 'player'
+  | 'stats'
+  | 'help'
+  | 'event-leaderboard'
+  | 'stat-leaders'
+  | 'scorecard';
 
 export interface AppState {
   view: View;

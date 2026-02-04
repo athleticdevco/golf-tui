@@ -203,8 +203,8 @@ export function PlayerProfile({ player, isLoading, error, selectedIndex = 0 }: P
       {/* No recent activity message */}
       {(!player.recentResults || player.recentResults.length === 0) && (
         <Box flexDirection="column" marginTop={1} paddingY={1}>
-          <Text color="yellow">No tournament results in 2025/2026</Text>
-          <Text dimColor>This player has not competed recently on the PGA Tour.</Text>
+          <Text color="yellow">No recent tournament results found</Text>
+          <Text dimColor>This may be due to ESPN data availability or tour/season coverage.</Text>
         </Box>
       )}
     </Box>

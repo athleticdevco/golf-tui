@@ -1,4 +1,13 @@
+import { cachedApiRequest } from './client.js';
 import type { PlayerProfile, LeaderboardEntry, TournamentResult, PlayerStat, Tour } from './types.js';
+
+interface ESPNScoreboardResponse {
+  events?: any[];
+  season?: {
+    year: number;
+    type: number;
+  };
+}
 
 interface ESPNOverviewResponse {
   statistics?: {
@@ -40,26 +49,68 @@ interface ESPNEventStat {
   }[];
 }
 
+function getSeasonWindow(tour: Tour): { start: Date; end: Date; yearLabel: string } {
+  const now = new Date();
+  if (tour === 'pga') {
+    // PGA Tour season generally spans across calendar years; use a Sep 1 boundary.
+    const boundaryMonth = 8; // 0-based (Sep)
+    const seasonYear = now.getMonth() >= boundaryMonth ? now.getFullYear() + 1 : now.getFullYear();
+    const start = new Date(seasonYear - 1, boundaryMonth, 1);
+    const end = new Date(seasonYear, boundaryMonth, 1);
+    return { start, end, yearLabel: String(seasonYear) };
+  }
+
+  // Default: calendar-year season
+  return {
+    start: new Date(now.getFullYear(), 0, 1),
+    end: new Date(now.getFullYear() + 1, 0, 1),
+    yearLabel: String(now.getFullYear()),
+  };
+}
+
+function toYmd(d: Date): string {
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}${mm}${dd}`;
+}
+
+function mondayOfWeek(d: Date): Date {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  const day = x.getDay(); // 0 Sun
+  const diff = day === 0 ? -6 : 1 - day;
+  x.setDate(x.getDate() + diff);
+  return x;
+}
+
+function weeksBetween(start: Date, end: Date): string[] {
+  const dates: string[] = [];
+  let cur = mondayOfWeek(start);
+  const endTime = end.getTime();
+  while (cur.getTime() < endTime) {
+    dates.push(toYmd(cur));
+    cur = new Date(cur);
+    cur.setDate(cur.getDate() + 7);
+  }
+  return dates;
+}
+
 async function fetchRecentTournamentResults(playerId: string, tour: Tour): Promise<TournamentResult[]> {
-  // Fetch results from recent scoreboard data (more current than overview endpoint)
+  // Fetch results from season scoreboards (more current than overview endpoint)
   const results: TournamentResult[] = [];
   
   try {
-    // Get current week and past 8 weeks to cover recent tournaments
-    const now = new Date();
-    const dates: string[] = [];
-    for (let i = 0; i <= 8; i++) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - (i * 7));
-      dates.push(d.toISOString().slice(0, 10).replace(/-/g, ''));
-    }
+    const window = getSeasonWindow(tour);
+    const dates = weeksBetween(window.start, window.end);
     
     // Fetch scoreboards for each date in parallel
     const responses = await Promise.all(
-      dates.map(date => 
-        fetch(`https://site.api.espn.com/apis/site/v2/sports/golf/${tour}/scoreboard?dates=${date}`)
-          .then(r => r.ok ? r.json() : null)
-          .catch(() => null)
+      dates.map(date =>
+        cachedApiRequest<ESPNScoreboardResponse>(`/${tour}/scoreboard`, {
+          params: { dates: date },
+          ttlMs: 30 * 60 * 1000,
+        }).catch(() => null)
       )
     );
     
@@ -74,7 +125,9 @@ async function fetchRecentTournamentResults(playerId: string, tour: Tour): Promi
         if (!comp) continue;
         
         for (const c of comp.competitors || []) {
-          if (c.id === playerId) {
+          const cid = c?.id != null ? String(c.id) : '';
+          const aid = c?.athlete?.id != null ? String(c.athlete.id) : '';
+          if (cid === String(playerId) || aid === String(playerId)) {
             const score = typeof c.score === 'number' ? 
               (c.score === 0 ? 'E' : c.score > 0 ? `+${c.score}` : `${c.score}`) : 
               String(c.score || '-');
@@ -83,7 +136,7 @@ async function fetchRecentTournamentResults(playerId: string, tour: Tour): Promi
               tournamentId: event.id,
               tournamentName: event.shortName || event.name,
               date: event.date,
-              position: c.order ? String(c.order) : '-',
+              position: c.status?.position?.displayName || c.status?.displayValue || (c.order ? String(c.order) : '-'),
               score,
             });
             break;
@@ -150,18 +203,16 @@ export async function fetchPlayerProfile(playerId: string, playerName?: string, 
       };
     });
 
-    // Filter overview results to current year only
-    const currentYear = new Date().getFullYear();
-    const currentYearOverviewResults = overviewResults.filter(r => {
-      const year = new Date(r.date).getFullYear();
-      return year >= currentYear;
-    });
+    // Prefer a rolling 12-month window (avoids dropping late-year starts)
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 365);
+    const recentOverviewResults = overviewResults.filter(r => new Date(r.date) >= cutoff);
 
-    // Merge live results with filtered overview results (live takes priority)
+    // Merge live results with recent overview results (live takes priority)
     const seenIds = new Set(liveResults.map(r => r.tournamentId));
     const mergedResults = [
       ...liveResults,
-      ...currentYearOverviewResults.filter(r => !seenIds.has(r.tournamentId))
+      ...recentOverviewResults.filter(r => !seenIds.has(r.tournamentId))
     ].slice(0, 10);
 
     // Get earnings from rankings
@@ -174,25 +225,21 @@ export async function fetchPlayerProfile(playerId: string, playerName?: string, 
       return { value: cat.displayValue, rank: cat.rank };
     };
 
-    // Only include stats if player has recent results (current/last year)
-    const hasRecentActivity = mergedResults.length > 0;
-    
     return {
       id: playerId,
       name: playerName || `Player ${playerId}`,
-      // Only show stats if player has been active recently
-      earnings: hasRecentActivity ? (earningsCategory?.displayValue || getStatValue('EARNINGS')) : undefined,
-      wins: hasRecentActivity && getStatValue('WINS') ? parseInt(getStatValue('WINS')!, 10) : undefined,
-      topTens: hasRecentActivity && getStatValue('TOP10') ? parseInt(getStatValue('TOP10')!, 10) : undefined,
-      cutsMade: hasRecentActivity && getStatValue('CUTS') ? parseInt(getStatValue('CUTS')!, 10) : undefined,
-      events: hasRecentActivity && getStatValue('EVENTS') ? parseInt(getStatValue('EVENTS')!, 10) : undefined,
-      scoringAvg: hasRecentActivity && getStatValue('AVG') ? { value: getStatValue('AVG')! } : undefined,
-      drivingDistance: hasRecentActivity ? makeStat('yds/drv') : undefined,
-      drivingAccuracy: hasRecentActivity ? makeStat('drv acc') : undefined,
-      greensInReg: hasRecentActivity ? makeStat('greenshit') : undefined,
-      puttsPerGir: hasRecentActivity ? makeStat('pp gir') : undefined,
-      birdiesPerRound: hasRecentActivity ? makeStat('bird/rnd') : undefined,
-      sandSaves: hasRecentActivity ? makeStat('saves') : undefined,
+      earnings: earningsCategory?.displayValue || getStatValue('EARNINGS'),
+      wins: getStatValue('WINS') ? parseInt(getStatValue('WINS')!, 10) : undefined,
+      topTens: getStatValue('TOP10') ? parseInt(getStatValue('TOP10')!, 10) : undefined,
+      cutsMade: getStatValue('CUTS') ? parseInt(getStatValue('CUTS')!, 10) : undefined,
+      events: getStatValue('EVENTS') ? parseInt(getStatValue('EVENTS')!, 10) : undefined,
+      scoringAvg: getStatValue('AVG') ? { value: getStatValue('AVG')! } : undefined,
+      drivingDistance: makeStat('yds/drv'),
+      drivingAccuracy: makeStat('drv acc'),
+      greensInReg: makeStat('greenshit'),
+      puttsPerGir: makeStat('pp gir'),
+      birdiesPerRound: makeStat('bird/rnd'),
+      sandSaves: makeStat('saves'),
       lastSeasonPlayed: recentTourName,
       recentResults: mergedResults,
     };

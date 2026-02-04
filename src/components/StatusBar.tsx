@@ -19,38 +19,48 @@ const TOUR_NAMES: Record<Tour, string> = {
 
 export function StatusBar({ view, tour, isSearchFocused, scorecardAvailable = true, activeTours }: StatusBarProps) {
   return (
-    <Box marginTop={1} borderStyle="single" borderColor="gray" paddingX={1}>
+    <Box marginTop={1} borderStyle="single" borderColor="gray" paddingX={1} flexWrap="nowrap">
       <Box flexGrow={1}>
         <Text dimColor>
           {isSearchFocused ? (
             <Text><Text color="yellow">Esc</Text> cancel</Text>
           ) : view === 'leaderboard' ? (
             <Text>
+              <Text color="yellow">/</Text> cmds •
               <Text color="yellow">j/k</Text> nav
               {scorecardAvailable && <Text> • <Text color="yellow">c</Text> card</Text>}
-              <Text> • <Text color="yellow">Tab</Text> tour • <Text color="yellow">q</Text> quit</Text>
+              <Text> • <Text color="yellow">r</Text> refresh • <Text color="yellow">Tab</Text> tour • <Text color="yellow">q</Text> quit</Text>
             </Text>
           ) : view === 'schedule' ? (
             <Text>
-              <Text color="yellow">j/k</Text> nav • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
+              <Text color="yellow">/</Text> cmds • <Text color="yellow">j/k</Text> nav • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
+            </Text>
+          ) : view === 'players' ? (
+            <Text>
+              <Text color="yellow">/</Text> cmds • <Text color="yellow">s</Text> search • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
             </Text>
           ) : view === 'player' ? (
             <Text>
-              <Text color="yellow">j/k</Text> nav • <Text color="yellow">Enter</Text> event • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
+              <Text color="yellow">/</Text> cmds • <Text color="yellow">j/k</Text> nav • <Text color="yellow">t</Text> stats • <Text color="yellow">Enter</Text> event • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
+            </Text>
+          ) : view === 'stats' ? (
+            <Text>
+              <Text color="yellow">/</Text> cmds • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
             </Text>
           ) : view === 'event-leaderboard' ? (
             <Text>
+              <Text color="yellow">/</Text> cmds •
               <Text color="yellow">j/k</Text> nav
               {scorecardAvailable && <Text> • <Text color="yellow">c</Text> card</Text>}
               <Text> • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit</Text>
             </Text>
           ) : view === 'scorecard' ? (
             <Text>
-              <Text color="yellow">1-4</Text> round • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
+              <Text color="yellow">/</Text> cmds • <Text color="yellow">1-4</Text> round • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
             </Text>
           ) : (
             <Text>
-              <Text color="yellow">Esc</Text> close • <Text color="yellow">q</Text> quit
+              <Text color="yellow">/</Text> cmds • <Text color="yellow">Esc</Text> close • <Text color="yellow">q</Text> quit
             </Text>
           )}
         </Text>

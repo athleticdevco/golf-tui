@@ -11,6 +11,8 @@ import {
   Leaderboard,
   PlayerProfile,
   TournamentList,
+  PlayersView,
+  StatsView,
   CommandPalette,
   COMMANDS,
   filterCommands,
@@ -77,9 +79,9 @@ export function App() {
 
   // Get leaderboard search results (players in current tournament)
   const leaderboardSearchResults = useMemo(() => {
-    if (!isSearchMode || !leaderboard) return [];
+    if (!isSearchMode || !leaderboard || view !== 'leaderboard') return [];
     return searchPlayers(leaderboard.entries, commandInput);
-  }, [isSearchMode, leaderboard, commandInput]);
+  }, [isSearchMode, leaderboard, commandInput, view]);
 
   // Get global search results (all players)
   const { results: globalSearchResults, isLoading: globalSearchLoading } = useGlobalSearch(
@@ -94,12 +96,16 @@ export function App() {
     switch (view) {
       case 'leaderboard':
         return leaderboard ? [leaderboard.tournament.name] : [];
+      case 'players':
+        return ['Players'];
       case 'player':
         return leaderboard && player
           ? [leaderboard.tournament.name, player.name]
           : player
           ? [player.name]
           : [];
+      case 'stats':
+        return player ? [player.name, 'Stats'] : ['Stats'];
       case 'event-leaderboard':
         return eventLeaderboard && player
           ? [player.name, eventLeaderboard.tournament.name]
@@ -129,6 +135,17 @@ export function App() {
         break;
       case 'schedule':
         setView('schedule');
+        break;
+      case 'players':
+        setView('players');
+        setIsSearchFocused(false);
+        setCommandInput('');
+        setSearchIndex(0);
+        break;
+      case 'stats':
+        setView('stats');
+        setIsSearchFocused(false);
+        setCommandInput('');
         break;
       case 'pga':
         setTour('pga');
@@ -184,6 +201,11 @@ export function App() {
 
     // Navigate based on view and index
     switch (view) {
+      case 'stats':
+        if (index === 0) {
+          setView(player ? 'player' : 'leaderboard');
+        }
+        break;
       case 'player':
         if (index === 0) {
           setView('leaderboard');
@@ -223,7 +245,7 @@ export function App() {
         break;
     }
     setBreadcrumbIndex(null);
-  }, [view, breadcrumbItems.length, clearPlayer, clearScorecard, setAutoRefresh, scorecard, leaderboard, loadPlayer]);
+  }, [view, breadcrumbItems.length, player, clearPlayer, clearScorecard, setAutoRefresh, scorecard, leaderboard, loadPlayer]);
 
   // Keyboard input
   useInput((input, key) => {
@@ -247,7 +269,7 @@ export function App() {
     }
 
     // Open search mode (s key)
-    if (input === 's' && !isSearchFocused && view === 'leaderboard') {
+    if (input === 's' && !isSearchFocused && (view === 'leaderboard' || view === 'players')) {
       setIsSearchFocused(true);
       setCommandInput('');
       return;
@@ -343,6 +365,16 @@ export function App() {
         setView('leaderboard');
         return;
       }
+      if (view === 'players') {
+        setView('leaderboard');
+        setCommandInput('');
+        setSearchIndex(0);
+        return;
+      }
+      if (view === 'stats') {
+        setView(player ? 'player' : 'leaderboard');
+        return;
+      }
       return;
     }
 
@@ -403,6 +435,12 @@ export function App() {
         setSelectedRound(parseInt(input, 10));
         return;
       }
+    }
+
+    // Jump to stats from player profile
+    if (input === 't' && !isSearchFocused && view === 'player') {
+      setView('stats');
+      return;
     }
 
     // Open scorecard from leaderboard or event leaderboard
@@ -526,7 +564,7 @@ export function App() {
       {showHelp && <HelpView />}
 
       {/* Search input */}
-      {!showHelp && (view === 'leaderboard' || isSearchFocused) && (
+      {!showHelp && (view === 'leaderboard' || view === 'players' || isSearchFocused) && (
         <SearchInput
           value={commandInput}
           onChange={handleQueryChange}
@@ -589,6 +627,11 @@ export function App() {
         />
       )}
 
+      {/* Players view */}
+      {!showHelp && view === 'players' && (
+        <PlayersView isSearchFocused={isSearchFocused} />
+      )}
+
       {/* Player profile view */}
       {!showHelp && view === 'player' && (
         <PlayerProfile
@@ -597,6 +640,11 @@ export function App() {
           error={playerError}
           selectedIndex={playerResultIndex}
         />
+      )}
+
+      {/* Stats view */}
+      {!showHelp && view === 'stats' && (
+        <StatsView player={player} />
       )}
 
       {/* Event leaderboard view (from player profile drill-down) */}

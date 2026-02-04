@@ -37,7 +37,9 @@ interface ESPNEvent {
 
 export async function fetchTournaments(tour: Tour): Promise<Tournament[]> {
   try {
-    const response = await cachedApiRequest<ESPNScoreboardResponse>(`/${tour}/scoreboard`);
+    const response = await cachedApiRequest<ESPNScoreboardResponse>(`/${tour}/scoreboard`, {
+      ttlMs: 2 * 60 * 1000,
+    });
     
     if (!response.events) {
       return [];
@@ -78,7 +80,8 @@ export async function fetchTournaments(tour: Tour): Promise<Tournament[]> {
 export async function fetchSchedule(tour: Tour): Promise<Tournament[]> {
   try {
     const response = await cachedApiRequest<ESPNScoreboardResponse>(`/${tour}/scoreboard`, {
-      params: { dates: `${new Date().getFullYear()}` }
+      params: { dates: `${new Date().getFullYear()}` },
+      ttlMs: 6 * 60 * 60 * 1000,
     });
     
     if (!response.events) {
