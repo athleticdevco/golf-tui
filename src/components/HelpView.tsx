@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
+import { COMMANDS } from './CommandPalette.js';
 
 export function HelpView() {
   return (
@@ -8,27 +9,31 @@ export function HelpView() {
       <Text dimColor>Press any key to close</Text>
       
       <Box marginTop={1} flexDirection="column">
-        <Text><Text color="yellow">/leaderboard</Text>  View live tournament leaderboard</Text>
-        <Text><Text color="yellow">/schedule</Text>     View tournament schedule</Text>
-        <Text><Text color="yellow">/pga</Text>          Switch to PGA Tour</Text>
-        <Text><Text color="yellow">/lpga</Text>         Switch to LPGA Tour</Text>
-        <Text><Text color="yellow">/eur</Text>          Switch to DP World Tour</Text>
-        <Text><Text color="yellow">/champions</Text>    Switch to Champions Tour</Text>
-        <Text><Text color="yellow">/help</Text>         Show this help</Text>
+        {COMMANDS.map(cmd => (
+          <Text key={cmd.name}>
+            <Text color="yellow">/{cmd.name}</Text>
+            <Text>  {cmd.description}</Text>
+            {cmd.shortcut ? <Text dimColor>{`  (${cmd.shortcut})`}</Text> : null}
+          </Text>
+        ))}
       </Box>
 
       <Box marginTop={1} flexDirection="column">
         <Text bold color="cyan">Navigation</Text>
-        <Text><Text color="yellow">j / Down</Text>   Move down</Text>
-        <Text><Text color="yellow">k / Up</Text>     Move up</Text>
-        <Text><Text color="yellow">Tab</Text>        Cycle tours (leaderboard) / breadcrumb</Text>
-        <Text><Text color="yellow">Enter</Text>      Select / drill down</Text>
-        <Text><Text color="yellow">c</Text>          View player scorecard</Text>
-        <Text><Text color="yellow">1-4</Text>        Switch round (in scorecard)</Text>
-        <Text><Text color="yellow">Esc</Text>        Go back / cancel</Text>
-        <Text><Text color="yellow">/</Text>          Open command palette</Text>
-        <Text><Text color="yellow">r</Text>          Refresh data</Text>
+        <Text><Text color="yellow">/</Text>          Command palette</Text>
+        <Text><Text color="yellow">?</Text>          Help</Text>
         <Text><Text color="yellow">q</Text>          Quit</Text>
+        <Text><Text color="yellow">Esc</Text>        Back / cancel</Text>
+        <Text><Text color="yellow">s</Text>          Search / filter (leaderboard, players, schedule, stats)</Text>
+        <Text><Text color="yellow">j/k</Text>        Navigate lists</Text>
+        <Text><Text color="yellow">↑/↓</Text>        Navigate search results</Text>
+        <Text><Text color="yellow">Enter</Text>      Select / drill down</Text>
+        <Text><Text color="yellow">o</Text>          Sort (schedule, stats)</Text>
+        <Text><Text color="yellow">Tab</Text>        Tour (leaderboard) / breadcrumbs (when available)</Text>
+        <Text><Text color="yellow">r</Text>          Refresh (leaderboard)</Text>
+        <Text><Text color="yellow">c</Text>          Scorecard (leaderboard, event leaderboard)</Text>
+        <Text><Text color="yellow">1-4</Text>        Round (scorecard)</Text>
+        <Text><Text color="yellow">t</Text>          Stats (player)</Text>
       </Box>
     </Box>
   );

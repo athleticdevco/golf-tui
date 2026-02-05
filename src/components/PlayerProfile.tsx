@@ -10,7 +10,6 @@ function TigerGoatArt() {
       <Text color="white">⠀⠀⠀⠀⠀⠀⠀⠠⠴⠶⠾⠿⠿⠿⢶⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</Text>
       <Text color="white">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⢿⣿⣆⠐⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀</Text>
       <Text color="white">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠿⠿⠆⠹⠦⠀⠀⠀⠀⠀⠀⠀⠀</Text>
-      <Text color="white">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣤⣤⣤⣀⠐⣶⣶⣶⣶⣶⣶⡀⢀⣀⣀⠀⠀⠀</Text>
       <Text color="white">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠻⢿⣿⡆⢹⡿⠻⢿⣿⣿⣷⠈⠿⠛⠁⠀⠀</Text>
       <Text color="white">⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣴⣾⣷⣤⣉⣠⣾⣷⣦⣼⣿⣿⣿⣧⠀⠀⠀⠀⠀</Text>
       <Text color="white">⠀⣶⣶⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀</Text>
@@ -65,7 +64,9 @@ function StatRow({ label, stat, suffix = '' }: StatRowProps) {
     <Box>
       <Text dimColor>{label.padEnd(20)}</Text>
       <Text bold>{stat.value}{suffix}</Text>
-      {stat.rank && <Text dimColor> (#{stat.rank})</Text>}
+      {stat.rank !== undefined && stat.rank !== null && stat.rank > 0 && (
+        <Text dimColor> (#{stat.rank})</Text>
+      )}
     </Box>
   );
 }
@@ -74,7 +75,7 @@ export function PlayerProfile({ player, isLoading, error, selectedIndex = 0 }: P
   if (isLoading) {
     return (
       <Box justifyContent="center" marginY={1}>
-        <Spinner label="Loading player profile..." />
+        <Spinner type="player" label="Loading player profile..." />
       </Box>
     );
   }

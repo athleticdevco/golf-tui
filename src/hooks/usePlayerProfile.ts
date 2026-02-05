@@ -16,6 +16,8 @@ export function usePlayerProfile(): UsePlayerProfileResult {
   const [error, setError] = useState<string | null>(null);
 
   const loadPlayer = useCallback(async (playerId: string, playerName?: string, tour: Tour = 'pga') => {
+    // Clear prior player immediately so breadcrumbs/nav context don't reflect stale data.
+    setPlayer({ id: playerId, name: playerName || `Player ${playerId}` } as PlayerProfile);
     setIsLoading(true);
     setError(null);
 
@@ -23,9 +25,11 @@ export function usePlayerProfile(): UsePlayerProfileResult {
       const data = await fetchPlayerProfile(playerId, playerName, tour);
       setPlayer(data);
       if (!data) {
+        setPlayer(null);
         setError('Player not found');
       }
     } catch (err) {
+      setPlayer(null);
       setError(err instanceof Error ? err.message : 'Failed to load player');
     } finally {
       setIsLoading(false);

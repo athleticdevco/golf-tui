@@ -26,7 +26,7 @@ export function Leaderboard({ leaderboard, isLoading, error, selectedIndex, tour
   if (isLoading && !leaderboard) {
     return (
       <Box justifyContent="center" marginY={1}>
-        <Spinner label="Loading leaderboard..." />
+        <Spinner type="leaderboard" label="Loading leaderboard..." />
       </Box>
     );
   }

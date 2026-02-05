@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 import type { View, Tour } from '../api/types.js';
+import { getHints, type Hint } from '../utils/keymap.js';
 
 interface StatusBarProps {
   view: View;
@@ -8,6 +9,9 @@ interface StatusBarProps {
   isSearchFocused: boolean;
   scorecardAvailable?: boolean;
   activeTours?: Tour[];
+  hasBreadcrumbs?: boolean;
+  isCommandMode?: boolean;
+  isSearchMode?: boolean;
 }
 
 const TOUR_NAMES: Record<Tour, string> = {
@@ -17,52 +21,37 @@ const TOUR_NAMES: Record<Tour, string> = {
   'champions-tour': 'CHMP',
 };
 
-export function StatusBar({ view, tour, isSearchFocused, scorecardAvailable = true, activeTours }: StatusBarProps) {
+export function StatusBar({
+  view,
+  tour,
+  isSearchFocused,
+  scorecardAvailable = true,
+  activeTours,
+  hasBreadcrumbs = false,
+  isCommandMode = false,
+  isSearchMode = false,
+}: StatusBarProps) {
+  const hints: Hint[] = getHints({
+    view,
+    tour,
+    isSearchFocused,
+    isCommandMode,
+    isSearchMode,
+    hasBreadcrumbs,
+    scorecardAvailable,
+  });
+
   return (
     <Box marginTop={1} borderStyle="single" borderColor="gray" paddingX={1} flexWrap="nowrap">
       <Box flexGrow={1}>
         <Text dimColor>
-          {isSearchFocused ? (
-            <Text><Text color="yellow">Esc</Text> cancel</Text>
-          ) : view === 'leaderboard' ? (
-            <Text>
-              <Text color="yellow">/</Text> cmds •
-              <Text color="yellow">j/k</Text> nav
-              {scorecardAvailable && <Text> • <Text color="yellow">c</Text> card</Text>}
-              <Text> • <Text color="yellow">r</Text> refresh • <Text color="yellow">Tab</Text> tour • <Text color="yellow">q</Text> quit</Text>
+          {hints.map((h, i) => (
+            <Text key={`${h.key}-${h.label}`}>
+              {i > 0 && <Text dimColor> • </Text>}
+              <Text color="yellow">{h.key}</Text>
+              <Text> {h.label}</Text>
             </Text>
-          ) : view === 'schedule' ? (
-            <Text>
-              <Text color="yellow">/</Text> cmds • <Text color="yellow">j/k</Text> nav • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
-            </Text>
-          ) : view === 'players' ? (
-            <Text>
-              <Text color="yellow">/</Text> cmds • <Text color="yellow">s</Text> search • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
-            </Text>
-          ) : view === 'player' ? (
-            <Text>
-              <Text color="yellow">/</Text> cmds • <Text color="yellow">j/k</Text> nav • <Text color="yellow">t</Text> stats • <Text color="yellow">Enter</Text> event • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
-            </Text>
-          ) : view === 'stats' ? (
-            <Text>
-              <Text color="yellow">/</Text> cmds • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
-            </Text>
-          ) : view === 'event-leaderboard' ? (
-            <Text>
-              <Text color="yellow">/</Text> cmds •
-              <Text color="yellow">j/k</Text> nav
-              {scorecardAvailable && <Text> • <Text color="yellow">c</Text> card</Text>}
-              <Text> • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit</Text>
-            </Text>
-          ) : view === 'scorecard' ? (
-            <Text>
-              <Text color="yellow">/</Text> cmds • <Text color="yellow">1-4</Text> round • <Text color="yellow">Esc</Text> back • <Text color="yellow">q</Text> quit
-            </Text>
-          ) : (
-            <Text>
-              <Text color="yellow">/</Text> cmds • <Text color="yellow">Esc</Text> close • <Text color="yellow">q</Text> quit
-            </Text>
-          )}
+          ))}
         </Text>
       </Box>
       <Box>

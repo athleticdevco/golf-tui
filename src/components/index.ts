@@ -1,4 +1,6 @@
 export { Spinner } from './Spinner.js';
+export { GolfSpinner } from './GolfSpinner.js';
+export type { SpinnerType } from './GolfSpinner.js';
 export { Header } from './Header.js';
 export { PlayerCard } from './PlayerCard.js';
 export { Leaderboard } from './Leaderboard.js';
@@ -6,6 +8,8 @@ export { PlayerProfile } from './PlayerProfile.js';
 export { TournamentList } from './TournamentList.js';
 export { PlayersView } from './PlayersView.js';
 export { StatsView } from './StatsView.js';
+export { StatLeadersView } from './StatLeadersView.js';
+export { MetricDetailModal } from './MetricDetailModal.js';
 export { SearchInput } from './SearchInput.js';
 export { SearchResults } from './SearchResults.js';
 export { StatusBar } from './StatusBar.js';

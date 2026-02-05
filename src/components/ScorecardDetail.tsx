@@ -149,7 +149,7 @@ export function ScorecardDetail({ scorecard, isLoading, error, selectedRound }: 
   if (isLoading) {
     return (
       <Box flexDirection="column" paddingY={1}>
-        <Spinner label="Loading scorecard..." />
+        <Spinner type="scorecard" label="Loading scorecard..." />
       </Box>
     );
   }

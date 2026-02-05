@@ -1,5 +1,5 @@
 import { cachedApiRequest } from './client.js';
-import type { PlayerProfile, LeaderboardEntry, TournamentResult, PlayerStat, Tour } from './types.js';
+import type { PlayerProfile, LeaderboardEntry, TournamentResult, PlayerStat, RankingMetric, Tour } from './types.js';
 
 interface ESPNScoreboardResponse {
   events?: any[];
@@ -184,6 +184,16 @@ export async function fetchPlayerProfile(playerId: string, playerName?: string, 
     const findRankingCategory = (name: string) => 
       rankingCategories.find(c => c.name?.toLowerCase().includes(name) || c.abbreviation?.toLowerCase().includes(name));
 
+    const rankings: RankingMetric[] = rankingCategories
+      .filter(c => !!c.displayName && !!c.displayValue)
+      .map(c => ({
+        name: c.name,
+        displayName: c.displayName,
+        abbreviation: c.abbreviation,
+        displayValue: c.displayValue!,
+        rank: c.rank,
+      }));
+
     // Extract recent tournaments from overview (get the tour name for context)
     const recentTourData = data.recentTournaments?.[0];
     const recentTourName = recentTourData?.name;
@@ -242,6 +252,7 @@ export async function fetchPlayerProfile(playerId: string, playerName?: string, 
       sandSaves: makeStat('saves'),
       lastSeasonPlayed: recentTourName,
       recentResults: mergedResults,
+      rankings,
     };
   } catch (error) {
     console.error('Error fetching player profile:', error);

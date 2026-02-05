@@ -6,3 +6,4 @@ export { useGlobalSearch } from './useGlobalSearch.js';
 export { useScorecard } from './useScorecard.js';
 export { useBlink } from './useBlink.js';
 export { useActiveTours } from './useActiveTours.js';
+export { useStatLeaders } from './useStatLeaders.js';

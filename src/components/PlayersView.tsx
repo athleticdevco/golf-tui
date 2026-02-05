@@ -16,7 +16,7 @@ export function PlayersView({ isSearchFocused }: PlayersViewProps) {
         Press <Text color="yellow">s</Text> to search players, then <Text color="yellow">Enter</Text> to open profile.
       </Text>
       <Text dimColor>
-        Tip: type <Text color="yellow">/stats</Text> in command palette to view the Stats tab.
+        Press <Text color="yellow">/</Text> for commands • <Text color="yellow">Esc</Text> back
       </Text>
     </Box>
   );

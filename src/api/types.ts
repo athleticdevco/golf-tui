@@ -50,6 +50,14 @@ export interface PlayerStat {
   rank?: number;
 }
 
+export interface RankingMetric {
+  name: string;
+  displayName: string;
+  abbreviation?: string;
+  displayValue: string;
+  rank?: number;
+}
+
 export interface PlayerProfile extends Player {
   worldRanking?: number;
   fedexRank?: number;
@@ -67,6 +75,7 @@ export interface PlayerProfile extends Player {
   lastSeasonPlayed?: string;
   sandSaves?: PlayerStat;
   recentResults?: TournamentResult[];
+  rankings?: RankingMetric[];
 }
 
 export interface TournamentResult {

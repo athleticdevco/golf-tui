@@ -19,14 +19,25 @@ const TOUR_NAMES: Record<Tour, string> = {
   'champions-tour': 'Champions Tour',
 };
 
+const VISIBLE_ROWS = 12;
+
 export function TournamentList({ tournaments, isLoading, error, selectedIndex, tour }: TournamentListProps) {
   if (isLoading && tournaments.length === 0) {
     return (
       <Box justifyContent="center" marginY={1}>
-        <Spinner label="Loading schedule..." />
+        <Spinner type="schedule" label="Loading schedule..." />
       </Box>
     );
   }
+
+  // Calculate scroll window
+  const total = tournaments.length;
+  let startIndex = 0;
+  if (selectedIndex >= VISIBLE_ROWS) {
+    startIndex = selectedIndex - VISIBLE_ROWS + 1;
+  }
+  const endIndex = Math.min(startIndex + VISIBLE_ROWS, total);
+  const visible = tournaments.slice(startIndex, endIndex);
 
   if (error && tournaments.length === 0) {
     return (
@@ -49,8 +60,9 @@ export function TournamentList({ tournaments, isLoading, error, selectedIndex, t
       <Text bold color="cyan">{TOUR_NAMES[tour]} Schedule</Text>
       <Text dimColor>{'─'.repeat(60)}</Text>
 
-      {tournaments.map((tournament, index) => {
-        const isSelected = index === selectedIndex;
+      {visible.map((tournament, index) => {
+        const absoluteIndex = startIndex + index;
+        const isSelected = absoluteIndex === selectedIndex;
         const selector = isSelected ? '>' : ' ';
         
         let statusText = '';
@@ -81,6 +93,13 @@ export function TournamentList({ tournaments, isLoading, error, selectedIndex, t
           </Box>
         );
       })}
+
+      <Box marginTop={1}>
+        <Text dimColor>
+          Showing {startIndex + 1}-{endIndex} of {total} events
+          {selectedIndex < total - 1 && ' (j/↓ for more)'}
+        </Text>
+      </Box>
     </Box>
   );
 }

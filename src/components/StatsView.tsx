@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import type { PlayerProfile, PlayerStat } from '../api/types.js';
+import type { PlayerProfile, PlayerStat, RankingMetric } from '../api/types.js';
 import { formatDate, truncate } from '../utils/format.js';
 
 function bar(value: number, max: number, width = 18): string {
@@ -11,6 +11,27 @@ function bar(value: number, max: number, width = 18): string {
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
+}
+
+function sparkline(values: Array<number | null>, invert = false): string {
+  const chars = ['.', ':', '-', '=', '+', '*', '#', '@'];
+  const defined = values.filter((v): v is number => v !== null);
+  if (defined.length < 2) return values.map(v => (v === null ? '·' : chars[chars.length - 1])).join('');
+
+  const min = Math.min(...defined);
+  const max = Math.max(...defined);
+  const span = max - min || 1;
+
+  return values
+    .map(v => {
+      if (v === null) return '·';
+      const t = (v - min) / span;
+      const idx = invert
+        ? Math.round((1 - t) * (chars.length - 1))
+        : Math.round(t * (chars.length - 1));
+      return chars[clamp(idx, 0, chars.length - 1)]!;
+    })
+    .join('');
 }
 
 function parseStatNumber(v?: string): number | null {
@@ -181,7 +202,17 @@ function StatLine({ label, stat, max, invert = false }: { label: string; stat?: 
   );
 }
 
-export function StatsView({ player }: { player: PlayerProfile | null }) {
+export function StatsView({
+  player,
+  metrics,
+  selectedMetricIndex,
+  sortMode,
+}: {
+  player: PlayerProfile | null;
+  metrics: RankingMetric[];
+  selectedMetricIndex: number;
+  sortMode: 'rank' | 'name';
+}) {
   if (!player) {
     return (
       <Box flexDirection="column" marginY={1}>
@@ -194,18 +225,96 @@ export function StatsView({ player }: { player: PlayerProfile | null }) {
     );
   }
 
+  const parseFinish = (position?: string | null) => {
+    if (!position) return null;
+    const m = String(position).match(/\d+/);
+    return m ? Number(m[0]) : null;
+  };
+
+  const madeCut = (position?: string | null): boolean | null => {
+    if (!position) return null;
+    const p = String(position).toUpperCase();
+    if (p.includes('MC') || p.includes('CUT')) return false;
+    if (p.includes('WD') || p.includes('DQ')) return false;
+    const n = parseFinish(position);
+    if (n !== null) return true;
+    return null;
+  };
+
+  const average = (nums: number[]) => (nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : null);
+
+  const recent = player.recentResults ?? [];
+  const finishNums = recent
+    .map(r => parseFinish(r.position))
+    .filter((n): n is number => n !== null);
+
+  const parseScore = (score?: string | null) => {
+    if (!score) return null;
+    const s = String(score).trim().replace('−', '-');
+    if (!s || s === '-' || s === '--') return null;
+    if (s.toUpperCase() === 'E') return 0;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const avg5 = average(finishNums.slice(0, 5));
+  const avg10 = average(finishNums.slice(0, 10));
+  const fmtAvg = (n: number | null) => (n === null ? '—' : n.toFixed(1));
+
+  const last10 = recent.slice(0, 10);
+  const finishLast10 = last10.map(r => parseFinish(r.position));
+  const scoreLast10 = last10.map(r => parseScore(r.score));
+  const finishSpark = sparkline(finishLast10, true);
+  const scoreSpark = sparkline(scoreLast10, true);
+
+  const fmtFinish = (r: (typeof last10)[number]) => truncate(String(r.position || '-'), 4).padStart(4);
+  const fmtScore = (r: (typeof last10)[number]) => truncate(String(r.score || '-'), 4).padStart(4);
+  const finishSeries = last10.map(fmtFinish).join('');
+  const scoreSeries = last10.map(fmtScore).join('');
+
+  let cutStreak = 0;
+  for (const r of recent) {
+    const ok = madeCut(r.position);
+    if (ok === true) cutStreak += 1;
+    else break;
+  }
+
+  const ranked = metrics.filter(m => (m.rank ?? 0) > 0);
+  const byRankAsc = [...ranked].sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0));
+  const strengths = byRankAsc.slice(0, 3);
+  const weaknesses = [...byRankAsc].slice(-3).reverse();
+
+  const metricSummary = (m: RankingMetric) => `${truncate(m.displayName, 14)} #${m.rank}`;
+  const strengthsText = strengths.length ? strengths.map(metricSummary).join(' | ') : null;
+  const weaknessesText = weaknesses.length ? weaknesses.map(metricSummary).join(' | ') : null;
+
+  const seasonBits: string[] = [];
+  if (player.events !== undefined) seasonBits.push(`Ev ${player.events}`);
+  if (player.cutsMade !== undefined) seasonBits.push(`Cuts ${player.cutsMade}`);
+  if (player.wins !== undefined) seasonBits.push(`Wins ${player.wins}`);
+  if (player.topTens !== undefined) seasonBits.push(`Top10 ${player.topTens}`);
+  const seasonLine = seasonBits.length ? `Season: ${seasonBits.join('  ')}` : null;
+
+  const VISIBLE_METRICS = 8;
+  const totalMetrics = metrics.length;
+  const clampedIndex = totalMetrics === 0 ? 0 : clamp(selectedMetricIndex, 0, totalMetrics - 1);
+  const startIndex = clampedIndex >= VISIBLE_METRICS ? clampedIndex - VISIBLE_METRICS + 1 : 0;
+  const endIndex = Math.min(startIndex + VISIBLE_METRICS, totalMetrics);
+  const visible = metrics.slice(startIndex, endIndex);
+  const assumedField = 200;
+
   return (
     <Box flexDirection="column">
       <Box marginBottom={1}>
         <Text bold color="cyan">{player.name}</Text>
-        <Text dimColor>  - Stats</Text>
+        <Text dimColor>{`  - Stats  (metrics: ${totalMetrics}, sort: ${sortMode})`}</Text>
       </Box>
 
       {player.recentResults && player.recentResults.length > 0 && (
         <Box flexDirection="column" marginBottom={1}>
           <Text bold color="green">Recent Events</Text>
           <Text dimColor>{'─'.repeat(50)}</Text>
-          {player.recentResults.slice(0, 7).map((r, idx) => (
+          {player.recentResults.slice(0, 4).map((r, idx) => (
             <Box key={`${r.tournamentId}-${idx}`}>
               <Text dimColor>{formatDate(r.date).padEnd(8)}</Text>
               <Text>{String(r.position || '-').padEnd(5)}</Text>
@@ -224,125 +333,79 @@ export function StatsView({ player }: { player: PlayerProfile | null }) {
         </Box>
       )}
 
-      <Box flexDirection="column" marginBottom={1}>
-        <Text bold color="green">Season</Text>
-        <Text dimColor>{'─'.repeat(50)}</Text>
-        <Box>
-          {player.events !== undefined && (
-            <Text>
-              <Text dimColor>Events </Text>
-              <Text bold>{String(player.events).padEnd(4)}</Text>
-            </Text>
-          )}
-          {player.cutsMade !== undefined && (
-            <Text>
-              <Text dimColor>  Cuts </Text>
-              <Text bold>{String(player.cutsMade).padEnd(4)}</Text>
-            </Text>
-          )}
-          {player.wins !== undefined && (
-            <Text>
-              <Text dimColor>  Wins </Text>
-              <Text bold color={player.wins > 0 ? 'yellow' : 'white'}>{String(player.wins).padEnd(3)}</Text>
-            </Text>
-          )}
-          {player.topTens !== undefined && (
-            <Text>
-              <Text dimColor>  Top10 </Text>
-              <Text bold>{String(player.topTens).padEnd(3)}</Text>
-            </Text>
-          )}
+      {seasonLine && (
+        <Box marginBottom={1}>
+          <Text dimColor>{seasonLine}</Text>
         </Box>
+      )}
+
+      <Box flexDirection="column" marginBottom={1}>
+        <Text dimColor>
+          Trend: avg5 {fmtAvg(avg5)}  avg10 {fmtAvg(avg10)}  |  cut streak {cutStreak}
+        </Text>
+        {last10.length > 0 && (
+          <Box flexDirection="column">
+            <Text dimColor>{`Finish:${finishSeries}`}</Text>
+            <Text dimColor>{`      ${finishSpark}`}</Text>
+            <Text dimColor>{`Score :${scoreSeries}`}</Text>
+            <Text dimColor>{`      ${scoreSpark}`}</Text>
+          </Box>
+        )}
+        {recent.length > 0 && (
+          <Text dimColor>
+            Last {Math.min(recent.length, 7)}: {recent
+              .slice(0, 7)
+              .map(r => String(r.position || '-'))
+              .join('  ')}
+          </Text>
+        )}
       </Box>
 
-      {(() => {
-        const assumedField = 200;
-        const rows: MetricRow[] = [
-          buildMetric('SCR', 'Scoring Avg', 'lower', player.scoringAvg, { assumedField, min: 68, max: 74, invert: true }),
-          buildMetric('DST', 'Driving Distance', 'higher', player.drivingDistance, { assumedField, min: 260, max: 330 }),
-          buildMetric('ACC', 'Driving Accuracy', 'higher', player.drivingAccuracy, { assumedField, min: 45, max: 75 }),
-          buildMetric('GIR', 'Greens in Reg', 'higher', player.greensInReg, { assumedField, min: 55, max: 75 }),
-          buildMetric('PUT', 'Putts / GIR', 'lower', player.puttsPerGir, { assumedField, min: 1.6, max: 2.05, invert: true }),
-          buildMetric('BRD', 'Birdies / Rd', 'higher', player.birdiesPerRound, { assumedField, min: 2.5, max: 5.2 }),
-          buildMetric('SND', 'Sand Save %', 'higher', player.sandSaves, { assumedField, min: 35, max: 70 }),
-        ];
+      {(strengthsText || weaknessesText) && (
+        <Box flexDirection="column" marginBottom={1}>
+          {strengthsText && <Text dimColor>{`Strengths: ${strengthsText}`}</Text>}
+          {weaknessesText && <Text dimColor>{`Weaknesses: ${weaknessesText}`}</Text>}
+        </Box>
+      )}
 
-        const ranked = rows.filter(r => r.rank !== null && r.grade !== null);
-        if (ranked.length === 0) return null;
+      <Box flexDirection="column">
+        <Text bold color="green">All metrics</Text>
+        <Text dimColor>{'Metric'.padEnd(34)} {'Val'.padEnd(10)} {'Rank'.padEnd(6)} {'G'.padEnd(2)} Bar</Text>
+        <Text dimColor>{'─'.repeat(60)}</Text>
 
-        const byRankAsc = [...ranked].sort((a, b) => (a.rank! - b.rank!));
-        const strengths = byRankAsc.slice(0, 3);
-        const weaknesses = [...byRankAsc].slice(-3).reverse();
+        {visible.map((m, idx) => {
+          const absoluteIndex = startIndex + idx;
+          const isSelected = absoluteIndex === clampedIndex;
 
-        return (
-          <Box flexDirection="column" marginBottom={1}>
-            <Text bold color="green">Season profile</Text>
-            <Text dimColor>{'─'.repeat(50)}</Text>
+          const pct = percentileFromRank(m.rank, assumedField);
+          const grade = pct === null ? null : gradeFromPercentile(pct);
 
-            <Box marginBottom={1}>
-              <Box flexDirection="column" marginRight={4}>
-                <Text bold>Strengths</Text>
-                {strengths.map(r => (
-                  <Box key={r.key}>
-                    <Text dimColor>{r.name.padEnd(18)}</Text>
-                    <Text color={gradeColor(r.grade!)} bold>{r.grade!.padEnd(2)}</Text>
-                    <Text dimColor>  ({formatRank(r.rank ?? undefined)})</Text>
-                  </Box>
-                ))}
-              </Box>
+          return (
+            <Text key={`${m.name}-${absoluteIndex}`}>
+              <Text color={isSelected ? 'cyan' : 'white'}>{isSelected ? '> ' : '  '}</Text>
+              <Text color={isSelected ? 'cyan' : 'white'}>{truncate(m.displayName, 32).padEnd(33)}</Text>
+              <Text dimColor>{truncate(m.displayValue, 10).padEnd(11)}</Text>
+              <Text dimColor>{formatRank(m.rank ?? undefined).padEnd(6)}</Text>
+              {grade ? (
+                <Text color={gradeColor(grade)} bold>{grade.padEnd(2)}</Text>
+              ) : (
+                <Text dimColor>{'—'.padEnd(2)}</Text>
+              )}
+              <Text dimColor>{` ${rankBar(m.rank ?? null, assumedField, 8)}`}</Text>
+            </Text>
+          );
+        })}
 
-              <Box flexDirection="column">
-                <Text bold>Weaknesses</Text>
-                {weaknesses.map(r => (
-                  <Box key={r.key}>
-                    <Text dimColor>{r.name.padEnd(18)}</Text>
-                    <Text color={gradeColor(r.grade!)} bold>{r.grade!.padEnd(2)}</Text>
-                    <Text dimColor>  ({formatRank(r.rank ?? undefined)})</Text>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
+        {totalMetrics === 0 && <Text dimColor>No ESPN season ranking metrics found for this player.</Text>}
 
-            <Box flexDirection="column">
-              <Text bold>Profile table</Text>
-              <Text dimColor>{'Metric'.padEnd(18)} {'Val'.padEnd(10)} {'Rank'.padEnd(6)} {'Dir'.padEnd(3)} {'Grade'.padEnd(5)} Bar</Text>
-              <Text dimColor>{'─'.repeat(50)}</Text>
-              {rows.map(r => {
-                const gradeText = r.grade ?? '—';
-                const line =
-                  `${r.name.padEnd(18)}` +
-                  `${r.valueText.padEnd(10)}` +
-                  `${formatRank(r.rank ?? undefined).padEnd(6)}` +
-                  `${directionGlyph(r.direction).padEnd(3)}` +
-                  `${gradeText.padEnd(5)}` +
-                  ` ${rankBar(r.rank, assumedField, 8)}`;
-
-                return (
-                  <Text key={r.key}>
-                    <Text>{r.name.padEnd(18)}</Text>
-                    <Text dimColor>{r.valueText.padEnd(10)}</Text>
-                    <Text dimColor>{formatRank(r.rank ?? undefined).padEnd(6)}</Text>
-                    <Text dimColor>{directionGlyph(r.direction).padEnd(3)}</Text>
-                    {r.grade ? (
-                      <Text color={gradeColor(r.grade)} bold>{gradeText.padEnd(5)}</Text>
-                    ) : (
-                      <Text dimColor>{gradeText.padEnd(5)}</Text>
-                    )}
-                    <Text dimColor>{` ${rankBar(r.rank, assumedField, 8)}`}</Text>
-                  </Text>
-                );
-              })}
-              <Box marginTop={1}>
-                <Text dimColor>
-                  Strengths/Weaknesses are best/worst ranks shown above. Bar shows rank strength (= better). Grades are rank buckets.
-                </Text>
-              </Box>
-            </Box>
+        {totalMetrics > 0 && (
+          <Box marginTop={1}>
+            <Text dimColor>
+              Showing {startIndex + 1}-{endIndex} of {totalMetrics} metrics
+            </Text>
           </Box>
-        );
-      })()}
-
-      {/* Hide the old mini-chart section; the profile table above is the primary visualization. */}
+        )}
+      </Box>
     </Box>
   );
 }
