@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Box, Text, useApp, useInput, Static } from 'ink';
-import type { View, Tour, LeaderboardEntry, Tournament, RankingMetric } from './api/types.js';
+import type { View, Tour, LeaderboardEntry, Tournament, RankingMetric, SeasonSummary } from './api/types.js';
 import { fetchEventLeaderboard } from './api/leaderboard.js';
 import { useLeaderboard, useTournaments, usePlayerProfile, useGlobalSearch, useScorecard, useActiveTours, useStatLeaders } from './hooks/index.js';
 import {
@@ -14,6 +14,7 @@ import {
   PlayersView,
   StatsView,
   StatLeadersView,
+  SeasonResultsView,
   MetricDetailModal,
   CommandPalette,
   COMMANDS,
@@ -134,6 +135,10 @@ export function App() {
 
   const [playerOrigin, setPlayerOrigin] = useState<'leaderboard' | 'event'>('leaderboard');
 
+  // Season results state
+  const [seasonResultsIndex, setSeasonResultsIndex] = useState(0);
+  const [currentSeasonSummary, setCurrentSeasonSummary] = useState<SeasonSummary | null>(null);
+
   // Scorecard state
   const [selectedRound, setSelectedRound] = useState(1);
 
@@ -145,7 +150,7 @@ export function App() {
   const { activeTours } = useActiveTours();
   const { leaderboard, isLoading: leaderboardLoading, error: leaderboardError, refresh } = useLeaderboard(tour);
   const { tournaments, isLoading: tournamentsLoading, error: tournamentsError } = useTournaments(tour);
-  const { player, isLoading: playerLoading, error: playerError, loadPlayer, clear: clearPlayer } = usePlayerProfile();
+  const { player, isLoading: playerLoading, error: playerError, loadPlayer, clear: clearPlayer, seasonResults, seasonResultsLoading, loadSeasonResults, clearSeasonResults } = usePlayerProfile();
   const { scorecard, isLoading: scorecardLoading, error: scorecardError, loadScorecard, clear: clearScorecard, setAutoRefresh } = useScorecard();
   const { category: statCategory, leaders: statLeaders, isLoading: statLeadersLoading, error: statLeadersError, load: loadStatLeaders, clear: clearStatLeaders } = useStatLeaders();
 
@@ -365,10 +370,17 @@ export function App() {
         push('Scorecard');
         return items;
       }
+      case 'season-results': {
+        if (!player || !currentSeasonSummary) return [];
+
+        push(player.name, { kind: 'player', origin: playerOrigin, playerId: player.id, playerName: player.name });
+        push(`${currentSeasonSummary.year} Season`);
+        return items;
+      }
       default:
         return [];
     }
-  }, [view, leaderboard, player, playerOrigin, eventLeaderboard, eventOrigin, eventParentPlayer, scorecard]);
+  }, [view, leaderboard, player, playerOrigin, eventLeaderboard, eventOrigin, eventParentPlayer, scorecard, currentSeasonSummary]);
 
   const navigateToTarget = useCallback((target?: BreadcrumbTarget) => {
     if (!target) return;
@@ -692,6 +704,13 @@ export function App() {
         }
         return;
       }
+      if (view === 'season-results') {
+        clearSeasonResults();
+        setCurrentSeasonSummary(null);
+        setSeasonResultsIndex(0);
+        setView('player');
+        return;
+      }
       if (view === 'player') {
         if (playerOrigin === 'event' && eventLeaderboard) {
           // If we're back on the parent player, Esc exits the event context.
@@ -740,31 +759,46 @@ export function App() {
     }
 
     // Player profile navigation
-    if (view === 'player' && !isSearchFocused && player?.recentResults) {
-      const maxIndex = Math.min(player.recentResults.length - 1, 5);
+    if (view === 'player' && !isSearchFocused && player) {
+      const recentCount = Math.min(player.recentResults?.length || 0, 5);
+      const seasonCount = player.seasonHistory?.length || 0;
+      const maxIndex = recentCount + seasonCount - 1;
 
-      if (key.downArrow || input === 'j') {
+      if (maxIndex >= 0 && (key.downArrow || input === 'j')) {
         setPlayerResultIndex(prev => Math.min(prev + 1, maxIndex));
         return;
       }
-      if (key.upArrow || input === 'k') {
+      if (maxIndex >= 0 && (key.upArrow || input === 'k')) {
         setPlayerResultIndex(prev => Math.max(prev - 1, 0));
         return;
       }
       if (key.return) {
-        const result = player.recentResults[playerResultIndex];
-        if (result) {
-          setEventLoading(true);
-          setEventOrigin('player');
-          setEventParentPlayer({ id: player.id, name: player.name });
-          setPlayerOrigin('leaderboard');
-          setView('event-leaderboard');
-          fetchEventLeaderboard(result.tournamentId, result.tournamentName, result.date, tour)
-            .then(lb => {
-              setEventLeaderboard(lb);
-              setEventLoading(false);
-              setEventIndex(0);
-            });
+        // Recent tournament results (indices 0 to recentCount-1)
+        if (playerResultIndex < recentCount && player.recentResults) {
+          const result = player.recentResults[playerResultIndex];
+          if (result) {
+            setEventLoading(true);
+            setEventOrigin('player');
+            setEventParentPlayer({ id: player.id, name: player.name });
+            setPlayerOrigin('leaderboard');
+            setView('event-leaderboard');
+            fetchEventLeaderboard(result.tournamentId, result.tournamentName, result.date, tour)
+              .then(lb => {
+                setEventLeaderboard(lb);
+                setEventLoading(false);
+                setEventIndex(0);
+              });
+          }
+          return;
+        }
+        // Season history rows (indices recentCount+)
+        const seasonIdx = playerResultIndex - recentCount;
+        const season = player.seasonHistory?.[seasonIdx];
+        if (season) {
+          setCurrentSeasonSummary(season);
+          setSeasonResultsIndex(0);
+          loadSeasonResults(player.id, tour, season.year);
+          setView('season-results');
         }
         return;
       }
@@ -858,6 +892,20 @@ export function App() {
           setPlayerOrigin('leaderboard');
           setPlayerResultIndex(0);
         }
+        return;
+      }
+    }
+
+    // Season results view navigation
+    if (view === 'season-results' && !isSearchFocused && seasonResults) {
+      const maxIndex = seasonResults.results.length - 1;
+
+      if ((key.downArrow || input === 'j') && maxIndex >= 0) {
+        setSeasonResultsIndex(prev => Math.min(prev + 1, maxIndex));
+        return;
+      }
+      if ((key.upArrow || input === 'k') && maxIndex >= 0) {
+        setSeasonResultsIndex(prev => Math.max(prev - 1, 0));
         return;
       }
     }
@@ -1176,6 +1224,17 @@ export function App() {
           selectedIndex={statLeadersIndex}
           currentPlayerId={player?.id}
           currentPlayerRank={currentStatMetric?.rank}
+        />
+      )}
+
+      {/* Season results view */}
+      {!isSearchFocused && !showHelp && !metricDetail && view === 'season-results' && currentSeasonSummary && (
+        <SeasonResultsView
+          playerName={player?.name || ''}
+          season={currentSeasonSummary}
+          results={seasonResults}
+          isLoading={seasonResultsLoading}
+          selectedIndex={seasonResultsIndex}
         />
       )}
 

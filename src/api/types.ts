@@ -72,10 +72,10 @@ export interface PlayerProfile extends Player {
   greensInReg?: PlayerStat;
   puttsPerGir?: PlayerStat;
   birdiesPerRound?: PlayerStat;
-  lastSeasonPlayed?: string;
   sandSaves?: PlayerStat;
   recentResults?: TournamentResult[];
   rankings?: RankingMetric[];
+  seasonHistory?: SeasonSummary[];
 }
 
 export interface TournamentResult {
@@ -84,6 +84,21 @@ export interface TournamentResult {
   date: string;
   position: string;
   score: string;
+}
+
+export interface SeasonSummary {
+  year: number;
+  events: number;
+  wins: number;
+  topTens: number;
+  cutsMade: number;
+  earnings?: string;
+  scoringAvg?: string;
+}
+
+export interface SeasonResults {
+  year: number;
+  results: TournamentResult[];
 }
 
 export interface HoleScore {
@@ -118,7 +133,8 @@ export type View =
   | 'help'
   | 'event-leaderboard'
   | 'stat-leaders'
-  | 'scorecard';
+  | 'scorecard'
+  | 'season-results';
 
 export interface AppState {
   view: View;

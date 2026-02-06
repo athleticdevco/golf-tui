@@ -284,7 +284,7 @@ export function StatsView({
   const strengths = byRankAsc.slice(0, 3);
   const weaknesses = [...byRankAsc].slice(-3).reverse();
 
-  const metricSummary = (m: RankingMetric) => `${truncate(m.displayName, 14)} #${m.rank}`;
+  const metricSummary = (m: RankingMetric) => `${truncate(m.displayName, 18)} #${m.rank}`;
   const strengthsText = strengths.length ? strengths.map(metricSummary).join(' | ') : null;
   const weaknessesText = weaknesses.length ? weaknesses.map(metricSummary).join(' | ') : null;
 

@@ -173,13 +173,10 @@ export function PlayerProfile({ player, isLoading, error, selectedIndex = 0 }: P
         <Box flexDirection="column">
           <Box>
             <Text bold color="green">Recent Tournaments</Text>
-            {player.lastSeasonPlayed && (
-              <Text dimColor>  ({player.lastSeasonPlayed})</Text>
-            )}
             <Text dimColor>  - press Enter to view leaderboard</Text>
           </Box>
           <Text dimColor>{'─'.repeat(55)}</Text>
-          {player.recentResults.slice(0, 6).map((result, index) => {
+          {player.recentResults.slice(0, 5).map((result, index) => {
             const pos = formatPosition(result.position);
             const posColor = getPositionColor(pos);
             const isSelected = index === selectedIndex;
@@ -190,6 +187,44 @@ export function PlayerProfile({ player, isLoading, error, selectedIndex = 0 }: P
                 <Text color={isSelected ? posColor : posColor} bold={isSelected}>{pos.padEnd(5)}</Text>
                 <Text bold={isSelected}>{(result.score || '-').padEnd(6)}</Text>
                 <Text color={isSelected ? 'white' : 'gray'}>{result.tournamentName}</Text>
+              </Box>
+            );
+          })}
+        </Box>
+      )}
+
+      {/* Season History */}
+      {player.seasonHistory && player.seasonHistory.length > 0 && (
+        <Box flexDirection="column" marginTop={1}>
+          <Box>
+            <Text bold color="green">Season History</Text>
+            <Text dimColor>  - press Enter to view season results</Text>
+          </Box>
+          <Text dimColor>{'─'.repeat(65)}</Text>
+          <Box>
+            <Text dimColor>{'  '}</Text>
+            <Text dimColor>{'Year'.padEnd(7)}</Text>
+            <Text dimColor>{'Events'.padEnd(9)}</Text>
+            <Text dimColor>{'Wins'.padEnd(7)}</Text>
+            <Text dimColor>{'Top 10'.padEnd(9)}</Text>
+            <Text dimColor>{'Cuts'.padEnd(7)}</Text>
+            <Text dimColor>{'Avg'.padEnd(8)}</Text>
+            <Text dimColor>{'Earnings'}</Text>
+          </Box>
+          {player.seasonHistory.map((season, i) => {
+            const recentCount = Math.min(player.recentResults?.length || 0, 5);
+            const seasonIdx = recentCount + i;
+            const isSelected = seasonIdx === selectedIndex;
+            return (
+              <Box key={season.year}>
+                <Text color={isSelected ? 'cyan' : 'white'}>{isSelected ? '> ' : '  '}</Text>
+                <Text bold={isSelected}>{String(season.year).padEnd(7)}</Text>
+                <Text bold={isSelected}>{String(season.events).padEnd(9)}</Text>
+                <Text color={season.wins > 0 ? 'yellow' : 'white'} bold={isSelected}>{String(season.wins).padEnd(7)}</Text>
+                <Text bold={isSelected}>{String(season.topTens).padEnd(9)}</Text>
+                <Text bold={isSelected}>{String(season.cutsMade).padEnd(7)}</Text>
+                <Text bold={isSelected}>{(season.scoringAvg || '-').padEnd(8)}</Text>
+                <Text color="green" bold={isSelected}>{season.earnings || '-'}</Text>
               </Box>
             );
           })}

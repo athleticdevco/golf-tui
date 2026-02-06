@@ -1,5 +1,5 @@
 import { cachedApiRequest } from './client.js';
-import type { PlayerProfile, LeaderboardEntry, TournamentResult, PlayerStat, RankingMetric, Tour } from './types.js';
+import type { PlayerProfile, LeaderboardEntry, TournamentResult, PlayerStat, RankingMetric, Tour, SeasonSummary, SeasonResults } from './types.js';
 
 interface ESPNScoreboardResponse {
   events?: any[];
@@ -154,12 +154,144 @@ async function fetchRecentTournamentResults(playerId: string, tour: Tour): Promi
   return results;
 }
 
+interface ESPNSeasonStats {
+  splits?: {
+    categories?: {
+      name: string;
+      stats?: {
+        name: string;
+        displayValue?: string | null;
+      }[];
+    }[];
+  };
+}
+
+const seasonStatsCache = new Map<string, { data: SeasonSummary | null; timestamp: number }>();
+const SEASON_CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
+async function fetchSeasonStats(playerId: string, tour: Tour, year: number): Promise<SeasonSummary | null> {
+  const cacheKey = `${tour}:${playerId}:${year}`;
+  const cached = seasonStatsCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < SEASON_CACHE_TTL) return cached.data;
+
+  try {
+    const resp = await fetch(
+      `https://sports.core.api.espn.com/v2/sports/golf/leagues/${tour}/seasons/${year}/types/2/athletes/${playerId}/statistics`
+    );
+    if (!resp.ok) { seasonStatsCache.set(cacheKey, { data: null, timestamp: Date.now() }); return null; }
+    const data: ESPNSeasonStats = await resp.json();
+
+    const stats = data.splits?.categories?.find(c => c.name === 'general')?.stats || [];
+    const get = (name: string) => stats.find(s => s.name === name)?.displayValue ?? undefined;
+
+    const events = parseInt(get('tournamentsPlayed') || '0', 10);
+    if (events === 0) { seasonStatsCache.set(cacheKey, { data: null, timestamp: Date.now() }); return null; }
+
+    const result: SeasonSummary = {
+      year,
+      events,
+      wins: parseInt(get('wins') || '0', 10),
+      topTens: parseInt(get('topTenFinishes') || '0', 10),
+      cutsMade: parseInt(get('cutsMade') || '0', 10),
+      earnings: get('amount') || undefined,
+      scoringAvg: get('scoringAverage') || undefined,
+    };
+    seasonStatsCache.set(cacheKey, { data: result, timestamp: Date.now() });
+    return result;
+  } catch {
+    seasonStatsCache.set(cacheKey, { data: null, timestamp: Date.now() });
+    return null;
+  }
+}
+
+async function fetchSeasonHistory(playerId: string, tour: Tour): Promise<SeasonSummary[]> {
+  const currentYear = new Date().getFullYear();
+  const years = [currentYear, currentYear - 1, currentYear - 2, currentYear - 3];
+  const results = await Promise.all(years.map(y => fetchSeasonStats(playerId, tour, y)));
+  return results.filter((r): r is SeasonSummary => r !== null);
+}
+
+interface ESPNEventLogResponse {
+  events?: {
+    items?: {
+      event?: { $ref?: string };
+      competitor?: { $ref?: string };
+      played?: boolean;
+      league?: string;
+    }[];
+  };
+}
+
+const CORE_API = 'https://sports.core.api.espn.com/v2/sports/golf/leagues';
+const seasonResultsCache = new Map<string, { data: SeasonResults; timestamp: number }>();
+
+export async function fetchSeasonResults(playerId: string, tour: Tour, year: number): Promise<SeasonResults> {
+  const cacheKey = `sr:${tour}:${playerId}:${year}`;
+  const cached = seasonResultsCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < SEASON_CACHE_TTL) return cached.data;
+
+  const empty: SeasonResults = { year, results: [] };
+  try {
+    const logResp = await fetch(`${CORE_API}/${tour}/seasons/${year}/athletes/${playerId}/eventlog`);
+    if (!logResp.ok) { seasonResultsCache.set(cacheKey, { data: empty, timestamp: Date.now() }); return empty; }
+    const log: ESPNEventLogResponse = await logResp.json();
+
+    const items = (log.events?.items || []).filter(i => i.played && i.league === tour);
+    if (items.length === 0) { seasonResultsCache.set(cacheKey, { data: empty, timestamp: Date.now() }); return empty; }
+
+    const eventEntries = items.map(item => {
+      const eventRef = item.event?.$ref || '';
+      const compRef = item.competitor?.$ref || '';
+      const eventId = eventRef.split('/events/')[1]?.split('?')[0] || '';
+      return { eventId, eventRef, compRef };
+    }).filter(e => e.eventId);
+
+    // Resolve event info + score + status in parallel for all events
+    const resolved = await Promise.all(eventEntries.map(async ({ eventId, eventRef, compRef }) => {
+      try {
+        const scoreUrl = compRef ? compRef.replace(/\?.*/, '') + '/score' : '';
+        const statusUrl = compRef ? compRef.replace(/\?.*/, '') + '/status' : '';
+
+        const [eventResp, scoreResp, statusResp] = await Promise.all([
+          fetch(eventRef).then(r => r.ok ? r.json() : null).catch(() => null),
+          scoreUrl ? fetch(scoreUrl).then(r => r.ok ? r.json() : null).catch(() => null) : null,
+          statusUrl ? fetch(statusUrl).then(r => r.ok ? r.json() : null).catch(() => null) : null,
+        ]);
+
+        if (!eventResp) return null;
+
+        return {
+          tournamentId: eventId,
+          tournamentName: eventResp.shortName || eventResp.name || 'Unknown',
+          date: eventResp.date || '',
+          score: scoreResp?.displayValue || '-',
+          position: statusResp?.position?.displayName || '-',
+        } as TournamentResult;
+      } catch {
+        return null;
+      }
+    }));
+
+    const results = resolved
+      .filter((r): r is TournamentResult => r !== null)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    const seasonResults: SeasonResults = { year, results };
+    seasonResultsCache.set(cacheKey, { data: seasonResults, timestamp: Date.now() });
+    return seasonResults;
+  } catch {
+    seasonResultsCache.set(cacheKey, { data: empty, timestamp: Date.now() });
+    return empty;
+  }
+}
+
 export async function fetchPlayerProfile(playerId: string, playerName?: string, tour: Tour = 'pga'): Promise<PlayerProfile | null> {
   try {
-    // Fetch both overview and recent scoreboard data in parallel
-    const [overviewResponse, liveResults] = await Promise.all([
+    // Fetch overview, recent scoreboard data, and season history in parallel
+    const [overviewResponse, liveResults, seasonHistory] = await Promise.all([
       fetch(`https://site.web.api.espn.com/apis/common/v3/sports/golf/${tour}/athletes/${playerId}/overview`),
       fetchRecentTournamentResults(playerId, tour),
+      fetchSeasonHistory(playerId, tour),
     ]);
     
     if (!overviewResponse.ok) {
@@ -194,9 +326,8 @@ export async function fetchPlayerProfile(playerId: string, playerName?: string, 
         rank: c.rank,
       }));
 
-    // Extract recent tournaments from overview (get the tour name for context)
+    // Extract recent tournaments from overview
     const recentTourData = data.recentTournaments?.[0];
-    const recentTourName = recentTourData?.name;
     const recentTournaments = recentTourData?.eventsStats || [];
     const overviewResults: TournamentResult[] = recentTournaments.slice(0, 10).map(event => {
       const competitor = event.competitions?.[0]?.competitors?.[0];
@@ -250,9 +381,9 @@ export async function fetchPlayerProfile(playerId: string, playerName?: string, 
       puttsPerGir: makeStat('pp gir'),
       birdiesPerRound: makeStat('bird/rnd'),
       sandSaves: makeStat('saves'),
-      lastSeasonPlayed: recentTourName,
       recentResults: mergedResults,
       rankings,
+      seasonHistory,
     };
   } catch (error) {
     console.error('Error fetching player profile:', error);

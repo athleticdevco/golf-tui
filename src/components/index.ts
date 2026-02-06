@@ -9,6 +9,7 @@ export { TournamentList } from './TournamentList.js';
 export { PlayersView } from './PlayersView.js';
 export { StatsView } from './StatsView.js';
 export { StatLeadersView } from './StatLeadersView.js';
+export { SeasonResultsView } from './SeasonResultsView.js';
 export { MetricDetailModal } from './MetricDetailModal.js';
 export { SearchInput } from './SearchInput.js';
 export { SearchResults } from './SearchResults.js';
