@@ -1,0 +1,683 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0369F2FE452967E60A6FD856 /* LeaderboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513CAAB5D8A9C667357222AE /* LeaderboardViewModel.swift */; };
+		065543C8D867437515F2BDB6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4380401A94E4363FFAC47BA /* Assets.xcassets */; };
+		0E2DF6C213CF654C443EBDAE /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76006BCFC4CE74354E45164D /* ErrorView.swift */; };
+		11F9A1C7A0CF686602D70368 /* ScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F5EB3730B390065BC3A931 /* ScheduleView.swift */; };
+		1325E20C31CE760D30BCC6A8 /* StatsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00AE9E7B13950EB7C815468 /* StatsService.swift */; };
+		1D7D2A96022E14188915C371 /* ScorecardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F6C4DC6166731F7B0C50CF /* ScorecardViewModel.swift */; };
+		254456F175F584C18D17568E /* TourPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CF0A5ACC625DF2EB067294 /* TourPicker.swift */; };
+		279D13BF72F5739B037749DE /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC3ED57160C57FA9C93E086 /* APIClient.swift */; };
+		2A8E964378911A76327F62DA /* ScoreText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD778514D2F1A79A37447903 /* ScoreText.swift */; };
+		2C00AE5251D6426E13F05D18 /* RetroLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D5823794B0402E28B4DA52 /* RetroLoadingView.swift */; };
+		329C458079F2CEE3AC4FF521 /* GreenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA513B60EC1EECAE2042B19D /* GreenApp.swift */; };
+		32DB82428C69873663A8601E /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82691EBD643409A4B44AF3A3 /* LoadingView.swift */; };
+		37393ED6686CA942FF92DE0C /* RetroTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2CD5AE120C55E3897F1AE8 /* RetroTheme.swift */; };
+		A1B2C3D4E5F60718091A2B3C /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6A7B8C9D0E1F2A3B4C5 /* ThemeManager.swift */; };
+		374CD3738A2076E75EF23E20 /* Leaderboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2FF8163B505ADF83E28B5C /* Leaderboard.swift */; };
+		3CFB85340F5C75610C07F39C /* LeaderboardRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88716CD2B054F2E5BFB45C3 /* LeaderboardRowView.swift */; };
+		415608C808918FCD09C36290 /* LeaderboardHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0323CFD0FA1A4BC0405C73 /* LeaderboardHeaderView.swift */; };
+		44DCAC37EB2B54E2E4359D12 /* PlayerProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6B417977E2BC1C1AD08406 /* PlayerProfileViewModel.swift */; };
+		47A3E21F16AD3CEED2608178 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73E9C4B205DAD33A25BB02E /* Formatters.swift */; };
+		4C94E748CBCA173A79CB27DC /* Scorecard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0BA563A8F7B5E913AC3A62 /* Scorecard.swift */; };
+		57C87E99D4BC7601C0FD9717 /* PressStart2P-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1176E03CC1D241C3B54A70FC /* PressStart2P-Regular.ttf */; };
+		5D06A6FA074C1582C4085F53 /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A6E83BB60227739C46EF64 /* SearchResult.swift */; };
+		6224C98DDEC9B0EBB23F9E79 /* LeaderboardEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E04F380A8476C9BE2A1BEC0 /* LeaderboardEntry.swift */; };
+		6239D89B8FF8283064A6E061 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CA8415BB2138B6A16E106F /* Player.swift */; };
+		630417C3755B604CC68244A3 /* Color+Golf.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9ACD174CC6BF00AC00F8B67 /* Color+Golf.swift */; };
+		653F3817380C3F81A4149E42 /* StatCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25AA347927493A65D001CF2A /* StatCategoriesView.swift */; };
+		6650BCA77E760C02E93D1E2B /* PlayerProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39FA323268F67CDA5ED137B3 /* PlayerProfile.swift */; };
+		67C893BEBB694EF2B0FD82DB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCEAB99CDE8202EB168DDCC /* Constants.swift */; };
+		6924E9F052C2F212C01EFBCC /* LiveIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E268588533058B9D7CF716 /* LiveIndicatorView.swift */; };
+		6F6CFC50963B353E471037A6 /* SeasonResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A1E163CEB61625B01BEA35 /* SeasonResultsView.swift */; };
+		75D9453BD7C28C6687650E34 /* PlayerProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320F970C2ED84E8D79DCB235 /* PlayerProfileView.swift */; };
+		7D2625E8085195FE0F486747 /* TournamentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CFC570E55CF82D6E0755DF /* TournamentService.swift */; };
+		7DB6E72EF6EB5809CBE1B0B0 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C276066AE15F7F16EFC47061 /* SearchViewModel.swift */; };
+		7FE478A688F1BD436C777261 /* PlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23477EC59681AF15E5609B2 /* PlayerService.swift */; };
+		809EB353AE9E81F9950895E3 /* NavigationDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0A3BF31D8BD7AA357212D7 /* NavigationDestination.swift */; };
+		84BC9A6A118E84DAFF9705FB /* TournamentRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056FFB92D79A5D2E0984062F /* TournamentRowView.swift */; };
+		85E3EDDF87696D5D69179BC5 /* LeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81F2EC4096129E0FC8F9472A /* LeaderboardView.swift */; };
+		93DEE09EB8CDDAFC47443EDE /* SeasonData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E01EC0D2CB1959879C8CDC /* SeasonData.swift */; };
+		94400B30D4C8C3AB799B7CC4 /* PlayerStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85487EF5816C4F3BD789D306 /* PlayerStat.swift */; };
+		96229B77569BB27984A2F85C /* TournamentResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74C679655A2AC3F3E871464 /* TournamentResult.swift */; };
+		A18542C3870D279F09379E49 /* ScorecardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180276E8C42DE0273C532B4D /* ScorecardService.swift */; };
+		A22AB437AF1339C928DA1235 /* FlagMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1EFD0D9FCCF6291D16CC27 /* FlagMap.swift */; };
+		A4FBF45E9DC3036C3A21EA7C /* TournamentListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1815D8C0C0D55B206B755AD /* TournamentListViewModel.swift */; };
+		B1AE76F225379909275AB8E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18462090CD9A1FB180F13001 /* ContentView.swift */; };
+		B8B3484C489E16A881359AFE /* Tour.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F4773C72D46129D8358092 /* Tour.swift */; };
+		B8EE504E1C62096087865E2D /* PixelBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FB935323A1E827781D92B2A /* PixelBorder.swift */; };
+		B9ED5F265CE9A5D90C74C6E7 /* LeaderboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7B74EF42F2353152FAF32D /* LeaderboardService.swift */; };
+		C0F328FEF2F2C647A9BC91FA /* Tournament.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B170D7F99F2721B4F7C6FC /* Tournament.swift */; };
+		C149E0C47B8178EDE3A28196 /* FavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673DF95972CFE99F9DAEE477 /* FavoritesManager.swift */; };
+		C94C1EB628A7B6AE14133A9F /* AsciiHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9D20FFF59FB295073E0758 /* AsciiHeaderView.swift */; };
+		C9BDDEB1F30AA901BF1CBDD3 /* FlagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C8EE8390DB07A8C7F4F1FD /* FlagView.swift */; };
+		CC9AC237229103E563C83DAC /* StatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B25BEE95A368E07B6A0EFBC0 /* StatusBadge.swift */; };
+		D2B62663DFDA31121C7C23CC /* ScorecardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666CC797B4FA6F0C2217AF9F /* ScorecardView.swift */; };
+		D560D8FB90BD6C67F235952B /* EventLeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEA969B7D65563A93D48BF13 /* EventLeaderboardView.swift */; };
+		D89035886B3D50A2AB1DAB6A /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E85184D52D1B5792BF966E4C /* SearchView.swift */; };
+		E1B4806F9720F8C645AF54F5 /* HoleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624279FF526DA8EC9E8720FA /* HoleGridView.swift */; };
+		E9CB0D7F4628C7DE4CD93238 /* TourSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6806877B01483FBDDAC8664 /* TourSelectionViewModel.swift */; };
+		F07330930A1C6F65677B471D /* FavoritePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1990796087C264623EA1E2AE /* FavoritePlayer.swift */; };
+		F2A66A3363D2737F0A751500 /* StatLeadersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B53B446B885D1D8715D9A7E1 /* StatLeadersView.swift */; };
+		F54D232A6E20B83B128432B1 /* StatCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A787F97B8E74DCCC3C4797 /* StatCategory.swift */; };
+		FB597347869D7E8B0255AAC4 /* StatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8D60B2AFF4F2475E889558 /* StatsViewModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		056FFB92D79A5D2E0984062F /* TournamentRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentRowView.swift; sourceTree = "<group>"; };
+		0F2CD5AE120C55E3897F1AE8 /* RetroTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroTheme.swift; sourceTree = "<group>"; };
+		D4E5F6A7B8C9D0E1F2A3B4C5 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		0FB935323A1E827781D92B2A /* PixelBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelBorder.swift; sourceTree = "<group>"; };
+		1176E03CC1D241C3B54A70FC /* PressStart2P-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PressStart2P-Regular.ttf"; sourceTree = "<group>"; };
+		16F5EB3730B390065BC3A931 /* ScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleView.swift; sourceTree = "<group>"; };
+		180276E8C42DE0273C532B4D /* ScorecardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorecardService.swift; sourceTree = "<group>"; };
+		18462090CD9A1FB180F13001 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		1990796087C264623EA1E2AE /* FavoritePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritePlayer.swift; sourceTree = "<group>"; };
+		25AA347927493A65D001CF2A /* StatCategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatCategoriesView.swift; sourceTree = "<group>"; };
+		320F970C2ED84E8D79DCB235 /* PlayerProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfileView.swift; sourceTree = "<group>"; };
+		38CFC570E55CF82D6E0755DF /* TournamentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentService.swift; sourceTree = "<group>"; };
+		39FA323268F67CDA5ED137B3 /* PlayerProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfile.swift; sourceTree = "<group>"; };
+		3E04F380A8476C9BE2A1BEC0 /* LeaderboardEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardEntry.swift; sourceTree = "<group>"; };
+		44D5823794B0402E28B4DA52 /* RetroLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroLoadingView.swift; sourceTree = "<group>"; };
+		4B0BA563A8F7B5E913AC3A62 /* Scorecard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scorecard.swift; sourceTree = "<group>"; };
+		4DC3ED57160C57FA9C93E086 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		513CAAB5D8A9C667357222AE /* LeaderboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardViewModel.swift; sourceTree = "<group>"; };
+		52CF0A5ACC625DF2EB067294 /* TourPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TourPicker.swift; sourceTree = "<group>"; };
+		5B9D20FFF59FB295073E0758 /* AsciiHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsciiHeaderView.swift; sourceTree = "<group>"; };
+		61A6E83BB60227739C46EF64 /* SearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResult.swift; sourceTree = "<group>"; };
+		624279FF526DA8EC9E8720FA /* HoleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoleGridView.swift; sourceTree = "<group>"; };
+		62A1E163CEB61625B01BEA35 /* SeasonResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonResultsView.swift; sourceTree = "<group>"; };
+		62B170D7F99F2721B4F7C6FC /* Tournament.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tournament.swift; sourceTree = "<group>"; };
+		666CC797B4FA6F0C2217AF9F /* ScorecardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorecardView.swift; sourceTree = "<group>"; };
+		673DF95972CFE99F9DAEE477 /* FavoritesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesManager.swift; sourceTree = "<group>"; };
+		67E268588533058B9D7CF716 /* LiveIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveIndicatorView.swift; sourceTree = "<group>"; };
+		72F6C4DC6166731F7B0C50CF /* ScorecardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorecardViewModel.swift; sourceTree = "<group>"; };
+		76006BCFC4CE74354E45164D /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
+		78F3983D4967CA4308D4D3B9 /* Green.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Green.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		81F2EC4096129E0FC8F9472A /* LeaderboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardView.swift; sourceTree = "<group>"; };
+		82691EBD643409A4B44AF3A3 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		85487EF5816C4F3BD789D306 /* PlayerStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStat.swift; sourceTree = "<group>"; };
+		8B0323CFD0FA1A4BC0405C73 /* LeaderboardHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardHeaderView.swift; sourceTree = "<group>"; };
+		8FCEAB99CDE8202EB168DDCC /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		91C8EE8390DB07A8C7F4F1FD /* FlagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagView.swift; sourceTree = "<group>"; };
+		AD778514D2F1A79A37447903 /* ScoreText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreText.swift; sourceTree = "<group>"; };
+		B25BEE95A368E07B6A0EFBC0 /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
+		B53B446B885D1D8715D9A7E1 /* StatLeadersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatLeadersView.swift; sourceTree = "<group>"; };
+		B73E9C4B205DAD33A25BB02E /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
+		B74C679655A2AC3F3E871464 /* TournamentResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentResult.swift; sourceTree = "<group>"; };
+		B88716CD2B054F2E5BFB45C3 /* LeaderboardRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardRowView.swift; sourceTree = "<group>"; };
+		BA513B60EC1EECAE2042B19D /* GreenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenApp.swift; sourceTree = "<group>"; };
+		BE8D60B2AFF4F2475E889558 /* StatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsViewModel.swift; sourceTree = "<group>"; };
+		BF7B74EF42F2353152FAF32D /* LeaderboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardService.swift; sourceTree = "<group>"; };
+		C276066AE15F7F16EFC47061 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		C6806877B01483FBDDAC8664 /* TourSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TourSelectionViewModel.swift; sourceTree = "<group>"; };
+		C6E01EC0D2CB1959879C8CDC /* SeasonData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonData.swift; sourceTree = "<group>"; };
+		CB6B417977E2BC1C1AD08406 /* PlayerProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfileViewModel.swift; sourceTree = "<group>"; };
+		D1815D8C0C0D55B206B755AD /* TournamentListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentListViewModel.swift; sourceTree = "<group>"; };
+		D9CA8415BB2138B6A16E106F /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		E4F4773C72D46129D8358092 /* Tour.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tour.swift; sourceTree = "<group>"; };
+		E85184D52D1B5792BF966E4C /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		E9ACD174CC6BF00AC00F8B67 /* Color+Golf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Golf.swift"; sourceTree = "<group>"; };
+		EC0A3BF31D8BD7AA357212D7 /* NavigationDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDestination.swift; sourceTree = "<group>"; };
+		EE2FF8163B505ADF83E28B5C /* Leaderboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Leaderboard.swift; sourceTree = "<group>"; };
+		F00AE9E7B13950EB7C815468 /* StatsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsService.swift; sourceTree = "<group>"; };
+		F23477EC59681AF15E5609B2 /* PlayerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerService.swift; sourceTree = "<group>"; };
+		F3A787F97B8E74DCCC3C4797 /* StatCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatCategory.swift; sourceTree = "<group>"; };
+		F4380401A94E4363FFAC47BA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F8A9ABC7A7A48B126F2AAAFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		FE1EFD0D9FCCF6291D16CC27 /* FlagMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagMap.swift; sourceTree = "<group>"; };
+		FEA969B7D65563A93D48BF13 /* EventLeaderboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLeaderboardView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		00C27A0CCB029FF464C0FFE9 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				5B9D20FFF59FB295073E0758 /* AsciiHeaderView.swift */,
+				76006BCFC4CE74354E45164D /* ErrorView.swift */,
+				91C8EE8390DB07A8C7F4F1FD /* FlagView.swift */,
+				67E268588533058B9D7CF716 /* LiveIndicatorView.swift */,
+				82691EBD643409A4B44AF3A3 /* LoadingView.swift */,
+				0FB935323A1E827781D92B2A /* PixelBorder.swift */,
+				44D5823794B0402E28B4DA52 /* RetroLoadingView.swift */,
+				AD778514D2F1A79A37447903 /* ScoreText.swift */,
+				B25BEE95A368E07B6A0EFBC0 /* StatusBadge.swift */,
+				52CF0A5ACC625DF2EB067294 /* TourPicker.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		096F727E2B3EB4631397695C /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				1176E03CC1D241C3B54A70FC /* PressStart2P-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		1DD5D9A2047ED83DCC4BCC16 /* Stats */ = {
+			isa = PBXGroup;
+			children = (
+				25AA347927493A65D001CF2A /* StatCategoriesView.swift */,
+				B53B446B885D1D8715D9A7E1 /* StatLeadersView.swift */,
+			);
+			path = Stats;
+			sourceTree = "<group>";
+		};
+		201D9A59622D070CB2BBB781 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				18462090CD9A1FB180F13001 /* ContentView.swift */,
+				BA513B60EC1EECAE2042B19D /* GreenApp.swift */,
+				EC0A3BF31D8BD7AA357212D7 /* NavigationDestination.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		20A33CAA269D0DE8E8DA0C24 /* Green */ = {
+			isa = PBXGroup;
+			children = (
+				F8A9ABC7A7A48B126F2AAAFE /* Info.plist */,
+				201D9A59622D070CB2BBB781 /* App */,
+				34DE791A107E474332150085 /* Extensions */,
+				7615A93F97A48C447AD82A7F /* Models */,
+				4770EF67B6765A8345EA3374 /* Resources */,
+				6E6A2124E4BB700728A68A50 /* Services */,
+				C06DCEBD979C986BCAE52CA7 /* Utilities */,
+				845B7BE3121143D8A5E4D6FC /* ViewModels */,
+				88A27CD95B1AB6CABE393E99 /* Views */,
+			);
+			path = Green;
+			sourceTree = "<group>";
+		};
+		2D078CC2D9D6C58ED33B2A43 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				320F970C2ED84E8D79DCB235 /* PlayerProfileView.swift */,
+				62A1E163CEB61625B01BEA35 /* SeasonResultsView.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		34DE791A107E474332150085 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				E9ACD174CC6BF00AC00F8B67 /* Color+Golf.swift */,
+				0F2CD5AE120C55E3897F1AE8 /* RetroTheme.swift */,
+				D4E5F6A7B8C9D0E1F2A3B4C5 /* ThemeManager.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		4770EF67B6765A8345EA3374 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F4380401A94E4363FFAC47BA /* Assets.xcassets */,
+				096F727E2B3EB4631397695C /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5AE7E5298AA8E7BD8C2914FC /* Schedule */ = {
+			isa = PBXGroup;
+			children = (
+				16F5EB3730B390065BC3A931 /* ScheduleView.swift */,
+				056FFB92D79A5D2E0984062F /* TournamentRowView.swift */,
+			);
+			path = Schedule;
+			sourceTree = "<group>";
+		};
+		6E6A2124E4BB700728A68A50 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				4DC3ED57160C57FA9C93E086 /* APIClient.swift */,
+				BF7B74EF42F2353152FAF32D /* LeaderboardService.swift */,
+				F23477EC59681AF15E5609B2 /* PlayerService.swift */,
+				180276E8C42DE0273C532B4D /* ScorecardService.swift */,
+				F00AE9E7B13950EB7C815468 /* StatsService.swift */,
+				38CFC570E55CF82D6E0755DF /* TournamentService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		7615A93F97A48C447AD82A7F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1990796087C264623EA1E2AE /* FavoritePlayer.swift */,
+				EE2FF8163B505ADF83E28B5C /* Leaderboard.swift */,
+				3E04F380A8476C9BE2A1BEC0 /* LeaderboardEntry.swift */,
+				D9CA8415BB2138B6A16E106F /* Player.swift */,
+				39FA323268F67CDA5ED137B3 /* PlayerProfile.swift */,
+				85487EF5816C4F3BD789D306 /* PlayerStat.swift */,
+				4B0BA563A8F7B5E913AC3A62 /* Scorecard.swift */,
+				61A6E83BB60227739C46EF64 /* SearchResult.swift */,
+				C6E01EC0D2CB1959879C8CDC /* SeasonData.swift */,
+				F3A787F97B8E74DCCC3C4797 /* StatCategory.swift */,
+				E4F4773C72D46129D8358092 /* Tour.swift */,
+				62B170D7F99F2721B4F7C6FC /* Tournament.swift */,
+				B74C679655A2AC3F3E871464 /* TournamentResult.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		767153F097B0DF43BCA2F141 /* Scorecard */ = {
+			isa = PBXGroup;
+			children = (
+				624279FF526DA8EC9E8720FA /* HoleGridView.swift */,
+				666CC797B4FA6F0C2217AF9F /* ScorecardView.swift */,
+			);
+			path = Scorecard;
+			sourceTree = "<group>";
+		};
+		845B7BE3121143D8A5E4D6FC /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				673DF95972CFE99F9DAEE477 /* FavoritesManager.swift */,
+				513CAAB5D8A9C667357222AE /* LeaderboardViewModel.swift */,
+				CB6B417977E2BC1C1AD08406 /* PlayerProfileViewModel.swift */,
+				72F6C4DC6166731F7B0C50CF /* ScorecardViewModel.swift */,
+				C276066AE15F7F16EFC47061 /* SearchViewModel.swift */,
+				BE8D60B2AFF4F2475E889558 /* StatsViewModel.swift */,
+				D1815D8C0C0D55B206B755AD /* TournamentListViewModel.swift */,
+				C6806877B01483FBDDAC8664 /* TourSelectionViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		88A27CD95B1AB6CABE393E99 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				00C27A0CCB029FF464C0FFE9 /* Common */,
+				95DE156CBA1E8B46B7D8EF0E /* Leaderboard */,
+				2D078CC2D9D6C58ED33B2A43 /* Player */,
+				5AE7E5298AA8E7BD8C2914FC /* Schedule */,
+				767153F097B0DF43BCA2F141 /* Scorecard */,
+				D72AF2A06AF15E3CA4FDC727 /* Search */,
+				1DD5D9A2047ED83DCC4BCC16 /* Stats */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		95DE156CBA1E8B46B7D8EF0E /* Leaderboard */ = {
+			isa = PBXGroup;
+			children = (
+				FEA969B7D65563A93D48BF13 /* EventLeaderboardView.swift */,
+				8B0323CFD0FA1A4BC0405C73 /* LeaderboardHeaderView.swift */,
+				B88716CD2B054F2E5BFB45C3 /* LeaderboardRowView.swift */,
+				81F2EC4096129E0FC8F9472A /* LeaderboardView.swift */,
+			);
+			path = Leaderboard;
+			sourceTree = "<group>";
+		};
+		B0308E2EB5E4EAC72FDF07FB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				78F3983D4967CA4308D4D3B9 /* Green.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C06DCEBD979C986BCAE52CA7 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				8FCEAB99CDE8202EB168DDCC /* Constants.swift */,
+				FE1EFD0D9FCCF6291D16CC27 /* FlagMap.swift */,
+				B73E9C4B205DAD33A25BB02E /* Formatters.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		D72AF2A06AF15E3CA4FDC727 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				E85184D52D1B5792BF966E4C /* SearchView.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
+		FCCD15F811ADAA6A6B071779 = {
+			isa = PBXGroup;
+			children = (
+				20A33CAA269D0DE8E8DA0C24 /* Green */,
+				B0308E2EB5E4EAC72FDF07FB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		389CC81489EC313B1B8F84EA /* Green */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1FBC47E49B8FD113D694D9A3 /* Build configuration list for PBXNativeTarget "Green" */;
+			buildPhases = (
+				BA956F6CA36150FFBCC5DD6A /* Sources */,
+				0C4239CFAE1D1339073B3100 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Green;
+			packageProductDependencies = (
+			);
+			productName = Green;
+			productReference = 78F3983D4967CA4308D4D3B9 /* Green.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D52A95431E60F7C3EB067E1E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					389CC81489EC313B1B8F84EA = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = D53CAF95B3C4E434BBE922D0 /* Build configuration list for PBXProject "Green" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = FCCD15F811ADAA6A6B071779;
+			minimizedProjectReferenceProxies = 1;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				389CC81489EC313B1B8F84EA /* Green */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0C4239CFAE1D1339073B3100 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				065543C8D867437515F2BDB6 /* Assets.xcassets in Resources */,
+				57C87E99D4BC7601C0FD9717 /* PressStart2P-Regular.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BA956F6CA36150FFBCC5DD6A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				279D13BF72F5739B037749DE /* APIClient.swift in Sources */,
+				C94C1EB628A7B6AE14133A9F /* AsciiHeaderView.swift in Sources */,
+				630417C3755B604CC68244A3 /* Color+Golf.swift in Sources */,
+				67C893BEBB694EF2B0FD82DB /* Constants.swift in Sources */,
+				B1AE76F225379909275AB8E0 /* ContentView.swift in Sources */,
+				0E2DF6C213CF654C443EBDAE /* ErrorView.swift in Sources */,
+				D560D8FB90BD6C67F235952B /* EventLeaderboardView.swift in Sources */,
+				F07330930A1C6F65677B471D /* FavoritePlayer.swift in Sources */,
+				C149E0C47B8178EDE3A28196 /* FavoritesManager.swift in Sources */,
+				A22AB437AF1339C928DA1235 /* FlagMap.swift in Sources */,
+				C9BDDEB1F30AA901BF1CBDD3 /* FlagView.swift in Sources */,
+				47A3E21F16AD3CEED2608178 /* Formatters.swift in Sources */,
+				329C458079F2CEE3AC4FF521 /* GreenApp.swift in Sources */,
+				E1B4806F9720F8C645AF54F5 /* HoleGridView.swift in Sources */,
+				374CD3738A2076E75EF23E20 /* Leaderboard.swift in Sources */,
+				6224C98DDEC9B0EBB23F9E79 /* LeaderboardEntry.swift in Sources */,
+				415608C808918FCD09C36290 /* LeaderboardHeaderView.swift in Sources */,
+				3CFB85340F5C75610C07F39C /* LeaderboardRowView.swift in Sources */,
+				B9ED5F265CE9A5D90C74C6E7 /* LeaderboardService.swift in Sources */,
+				85E3EDDF87696D5D69179BC5 /* LeaderboardView.swift in Sources */,
+				0369F2FE452967E60A6FD856 /* LeaderboardViewModel.swift in Sources */,
+				6924E9F052C2F212C01EFBCC /* LiveIndicatorView.swift in Sources */,
+				32DB82428C69873663A8601E /* LoadingView.swift in Sources */,
+				809EB353AE9E81F9950895E3 /* NavigationDestination.swift in Sources */,
+				B8EE504E1C62096087865E2D /* PixelBorder.swift in Sources */,
+				6239D89B8FF8283064A6E061 /* Player.swift in Sources */,
+				6650BCA77E760C02E93D1E2B /* PlayerProfile.swift in Sources */,
+				75D9453BD7C28C6687650E34 /* PlayerProfileView.swift in Sources */,
+				44DCAC37EB2B54E2E4359D12 /* PlayerProfileViewModel.swift in Sources */,
+				7FE478A688F1BD436C777261 /* PlayerService.swift in Sources */,
+				94400B30D4C8C3AB799B7CC4 /* PlayerStat.swift in Sources */,
+				2C00AE5251D6426E13F05D18 /* RetroLoadingView.swift in Sources */,
+				37393ED6686CA942FF92DE0C /* RetroTheme.swift in Sources */,
+				A1B2C3D4E5F60718091A2B3C /* ThemeManager.swift in Sources */,
+				11F9A1C7A0CF686602D70368 /* ScheduleView.swift in Sources */,
+				2A8E964378911A76327F62DA /* ScoreText.swift in Sources */,
+				4C94E748CBCA173A79CB27DC /* Scorecard.swift in Sources */,
+				A18542C3870D279F09379E49 /* ScorecardService.swift in Sources */,
+				D2B62663DFDA31121C7C23CC /* ScorecardView.swift in Sources */,
+				1D7D2A96022E14188915C371 /* ScorecardViewModel.swift in Sources */,
+				5D06A6FA074C1582C4085F53 /* SearchResult.swift in Sources */,
+				D89035886B3D50A2AB1DAB6A /* SearchView.swift in Sources */,
+				7DB6E72EF6EB5809CBE1B0B0 /* SearchViewModel.swift in Sources */,
+				93DEE09EB8CDDAFC47443EDE /* SeasonData.swift in Sources */,
+				6F6CFC50963B353E471037A6 /* SeasonResultsView.swift in Sources */,
+				653F3817380C3F81A4149E42 /* StatCategoriesView.swift in Sources */,
+				F54D232A6E20B83B128432B1 /* StatCategory.swift in Sources */,
+				F2A66A3363D2737F0A751500 /* StatLeadersView.swift in Sources */,
+				1325E20C31CE760D30BCC6A8 /* StatsService.swift in Sources */,
+				FB597347869D7E8B0255AAC4 /* StatsViewModel.swift in Sources */,
+				CC9AC237229103E563C83DAC /* StatusBadge.swift in Sources */,
+				B8B3484C489E16A881359AFE /* Tour.swift in Sources */,
+				254456F175F584C18D17568E /* TourPicker.swift in Sources */,
+				E9CB0D7F4628C7DE4CD93238 /* TourSelectionViewModel.swift in Sources */,
+				C0F328FEF2F2C647A9BC91FA /* Tournament.swift in Sources */,
+				A4FBF45E9DC3036C3A21EA7C /* TournamentListViewModel.swift in Sources */,
+				96229B77569BB27984A2F85C /* TournamentResult.swift in Sources */,
+				84BC9A6A118E84DAFF9705FB /* TournamentRowView.swift in Sources */,
+				7D2625E8085195FE0F486747 /* TournamentService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		14C82CFAB6FBEBF661DA1256 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J3S238RMP9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Green/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.green.golfapp;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		42E451A8C8A5B5A16E27F6A6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		737938A1A0942CD6E9212383 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J3S238RMP9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Green/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.green.golfapp;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9CEC866CDD5BCBB482580678 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1FBC47E49B8FD113D694D9A3 /* Build configuration list for PBXNativeTarget "Green" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				737938A1A0942CD6E9212383 /* Debug */,
+				14C82CFAB6FBEBF661DA1256 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D53CAF95B3C4E434BBE922D0 /* Build configuration list for PBXProject "Green" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9CEC866CDD5BCBB482580678 /* Debug */,
+				42E451A8C8A5B5A16E27F6A6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D52A95431E60F7C3EB067E1E /* Project object */;
+}

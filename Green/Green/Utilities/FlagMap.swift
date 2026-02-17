@@ -1,0 +1,61 @@
+import Foundation
+
+enum FlagMap {
+    private static let flags: [String: String] = [
+        "USA": "\u{1F1FA}\u{1F1F8}",
+        "US": "\u{1F1FA}\u{1F1F8}",
+        "GBR": "\u{1F1EC}\u{1F1E7}",
+        "GB": "\u{1F1EC}\u{1F1E7}",
+        "ENG": "\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}",
+        "SCO": "\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}",
+        "WAL": "\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}",
+        "NIR": "\u{1F1EC}\u{1F1E7}",
+        "IRL": "\u{1F1EE}\u{1F1EA}",
+        "AUS": "\u{1F1E6}\u{1F1FA}",
+        "CAN": "\u{1F1E8}\u{1F1E6}",
+        "RSA": "\u{1F1FF}\u{1F1E6}",
+        "ZAF": "\u{1F1FF}\u{1F1E6}",
+        "ESP": "\u{1F1EA}\u{1F1F8}",
+        "FRA": "\u{1F1EB}\u{1F1F7}",
+        "GER": "\u{1F1E9}\u{1F1EA}",
+        "DEU": "\u{1F1E9}\u{1F1EA}",
+        "ITA": "\u{1F1EE}\u{1F1F9}",
+        "JPN": "\u{1F1EF}\u{1F1F5}",
+        "KOR": "\u{1F1F0}\u{1F1F7}",
+        "SWE": "\u{1F1F8}\u{1F1EA}",
+        "NOR": "\u{1F1F3}\u{1F1F4}",
+        "DEN": "\u{1F1E9}\u{1F1F0}",
+        "DNK": "\u{1F1E9}\u{1F1F0}",
+        "FIN": "\u{1F1EB}\u{1F1EE}",
+        "NED": "\u{1F1F3}\u{1F1F1}",
+        "NLD": "\u{1F1F3}\u{1F1F1}",
+        "BEL": "\u{1F1E7}\u{1F1EA}",
+        "AUT": "\u{1F1E6}\u{1F1F9}",
+        "SUI": "\u{1F1E8}\u{1F1ED}",
+        "CHE": "\u{1F1E8}\u{1F1ED}",
+        "ARG": "\u{1F1E6}\u{1F1F7}",
+        "BRA": "\u{1F1E7}\u{1F1F7}",
+        "MEX": "\u{1F1F2}\u{1F1FD}",
+        "CHI": "\u{1F1E8}\u{1F1F1}",
+        "CHL": "\u{1F1E8}\u{1F1F1}",
+        "COL": "\u{1F1E8}\u{1F1F4}",
+        "VEN": "\u{1F1FB}\u{1F1EA}",
+        "CHN": "\u{1F1E8}\u{1F1F3}",
+        "IND": "\u{1F1EE}\u{1F1F3}",
+        "THA": "\u{1F1F9}\u{1F1ED}",
+        "PHI": "\u{1F1F5}\u{1F1ED}",
+        "PHL": "\u{1F1F5}\u{1F1ED}",
+        "MAS": "\u{1F1F2}\u{1F1FE}",
+        "MYS": "\u{1F1F2}\u{1F1FE}",
+        "SGP": "\u{1F1F8}\u{1F1EC}",
+        "NZL": "\u{1F1F3}\u{1F1FF}",
+        "FIJ": "\u{1F1EB}\u{1F1EF}",
+        "TPE": "\u{1F1F9}\u{1F1FC}",
+        "TWN": "\u{1F1F9}\u{1F1FC}",
+    ]
+
+    static func flag(for countryCode: String?) -> String {
+        guard let code = countryCode?.uppercased() else { return "\u{1F3F3}\u{FE0F}" }
+        return flags[code] ?? "\u{1F3F3}\u{FE0F}"
+    }
+}
