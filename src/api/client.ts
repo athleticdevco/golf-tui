@@ -1,18 +1,23 @@
 const API_BASE = 'https://site.api.espn.com/apis/site/v2/sports/golf';
 
-// Lazily-initialized undici Agent that skips TLS certificate verification.
-// Used when GOLF_TUI_INSECURE=1 for networks with SSL interception.
-let _insecureDispatcher: any = null;
+// When GOLF_TUI_INSECURE=1, disable TLS certificate verification.
+// Handles networks with SSL interception (captive portals, corporate proxies).
+let _insecureConfigured = false;
 
-async function getInsecureDispatcher(): Promise<any> {
-  if (!_insecureDispatcher) {
-    // @ts-expect-error undici is bundled with Node 18+ but @types/node doesn't export its types
-    const { Agent } = await import('undici');
-    _insecureDispatcher = new Agent({
-      connect: { rejectUnauthorized: false },
-    });
-  }
-  return _insecureDispatcher;
+function configureInsecureTls(): void {
+  if (_insecureConfigured || process.env.GOLF_TUI_INSECURE !== '1') return;
+
+  // Suppress the NODE_TLS_REJECT_UNAUTHORIZED warning (user explicitly opted in)
+  const origEmit = process.emit as (event: string, ...args: any[]) => boolean;
+  (process as any).emit = function (event: string, ...args: any[]) {
+    if (event === 'warning' && args[0]?.message?.includes('NODE_TLS_REJECT_UNAUTHORIZED')) {
+      return false;
+    }
+    return origEmit.apply(process, [event, ...args]);
+  };
+
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  _insecureConfigured = true;
 }
 
 /**
@@ -22,14 +27,11 @@ async function getInsecureDispatcher(): Promise<any> {
  * - Provides a descriptive error message for TLS certificate failures
  */
 export async function safeFetch(url: string | URL | Request, init?: RequestInit): Promise<Response> {
+  configureInsecureTls();
+
   let response: Response;
   try {
-    if (process.env.GOLF_TUI_INSECURE === '1') {
-      const dispatcher = await getInsecureDispatcher();
-      response = await fetch(url, { ...init, dispatcher } as any);
-    } else {
-      response = await fetch(url, init);
-    }
+    response = await fetch(url, init);
   } catch (error: any) {
     const msg = error?.cause?.code || error?.message || '';
     if (typeof msg === 'string' && msg.includes('UNABLE_TO_GET_ISSUER_CERT')) {
