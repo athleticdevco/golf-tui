@@ -1,5 +1,37 @@
 const API_BASE = 'https://site.api.espn.com/apis/site/v2/sports/golf';
 
+// When GOLF_TUI_INSECURE=1, disable TLS certificate verification globally.
+// This handles networks with SSL interception (captive portals, corporate proxies).
+let _insecureConfigured = false;
+
+function configureInsecureTls(): void {
+  if (!_insecureConfigured && process.env.GOLF_TUI_INSECURE === '1') {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    _insecureConfigured = true;
+  }
+}
+
+/**
+ * Wrapper around native fetch that:
+ * - Bypasses TLS verification when GOLF_TUI_INSECURE=1 (for networks with SSL interception)
+ * - Provides a descriptive error message for TLS certificate failures
+ */
+export async function safeFetch(url: string | URL | Request, init?: RequestInit): Promise<Response> {
+  configureInsecureTls();
+  try {
+    return await fetch(url, init);
+  } catch (error: any) {
+    const msg = error?.cause?.code || error?.message || '';
+    if (typeof msg === 'string' && msg.includes('UNABLE_TO_GET_ISSUER_CERT')) {
+      throw new Error(
+        'TLS certificate error — your network may be intercepting HTTPS connections.\n' +
+        'Try: golf --insecure'
+      );
+    }
+    throw error;
+  }
+}
+
 interface FetchOptions extends RequestInit {
   params?: Record<string, string | number>;
   ttlMs?: number;
@@ -22,7 +54,7 @@ export async function apiRequest<T>(
     url += `?${searchParams.toString()}`;
   }
 
-  const response = await fetch(url, {
+  const response = await safeFetch(url, {
     ...fetchOptions,
     headers: {
       'Content-Type': 'application/json',

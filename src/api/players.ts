@@ -1,4 +1,4 @@
-import { cachedApiRequest } from './client.js';
+import { cachedApiRequest, safeFetch } from './client.js';
 import type { PlayerProfile, LeaderboardEntry, TournamentResult, PlayerStat, RankingMetric, Tour, SeasonSummary, SeasonResults } from './types.js';
 
 interface ESPNScoreboardResponse {
@@ -175,7 +175,7 @@ async function fetchSeasonStats(playerId: string, tour: Tour, year: number): Pro
   if (cached && Date.now() - cached.timestamp < SEASON_CACHE_TTL) return cached.data;
 
   try {
-    const resp = await fetch(
+    const resp = await safeFetch(
       `https://sports.core.api.espn.com/v2/sports/golf/leagues/${tour}/seasons/${year}/types/2/athletes/${playerId}/statistics`
     );
     if (!resp.ok) { seasonStatsCache.set(cacheKey, { data: null, timestamp: Date.now() }); return null; }
@@ -232,7 +232,7 @@ export async function fetchSeasonResults(playerId: string, tour: Tour, year: num
 
   const empty: SeasonResults = { year, results: [] };
   try {
-    const logResp = await fetch(`${CORE_API}/${tour}/seasons/${year}/athletes/${playerId}/eventlog`);
+    const logResp = await safeFetch(`${CORE_API}/${tour}/seasons/${year}/athletes/${playerId}/eventlog`);
     if (!logResp.ok) { seasonResultsCache.set(cacheKey, { data: empty, timestamp: Date.now() }); return empty; }
     const log: ESPNEventLogResponse = await logResp.json();
 
@@ -253,9 +253,9 @@ export async function fetchSeasonResults(playerId: string, tour: Tour, year: num
         const statusUrl = compRef ? compRef.replace(/\?.*/, '') + '/status' : '';
 
         const [eventResp, scoreResp, statusResp] = await Promise.all([
-          fetch(eventRef).then(r => r.ok ? r.json() : null).catch(() => null),
-          scoreUrl ? fetch(scoreUrl).then(r => r.ok ? r.json() : null).catch(() => null) : null,
-          statusUrl ? fetch(statusUrl).then(r => r.ok ? r.json() : null).catch(() => null) : null,
+          safeFetch(eventRef).then(r => r.ok ? r.json() : null).catch(() => null),
+          scoreUrl ? safeFetch(scoreUrl).then(r => r.ok ? r.json() : null).catch(() => null) : null,
+          statusUrl ? safeFetch(statusUrl).then(r => r.ok ? r.json() : null).catch(() => null) : null,
         ]);
 
         if (!eventResp) return null;
@@ -289,7 +289,7 @@ export async function fetchPlayerProfile(playerId: string, playerName?: string, 
   try {
     // Fetch overview, recent scoreboard data, and season history in parallel
     const [overviewResponse, liveResults, seasonHistory] = await Promise.all([
-      fetch(`https://site.web.api.espn.com/apis/common/v3/sports/golf/${tour}/athletes/${playerId}/overview`),
+      safeFetch(`https://site.web.api.espn.com/apis/common/v3/sports/golf/${tour}/athletes/${playerId}/overview`),
       fetchRecentTournamentResults(playerId, tour),
       fetchSeasonHistory(playerId, tour),
     ]);
@@ -411,7 +411,7 @@ export async function searchAllPlayers(query: string): Promise<SearchResult[]> {
   if (!query || query.length < 2) return [];
   
   try {
-    const response = await fetch(
+    const response = await safeFetch(
       `https://site.web.api.espn.com/apis/common/v3/search?query=${encodeURIComponent(query)}&limit=10&type=player&sport=golf`
     );
     

@@ -1,3 +1,4 @@
+import { safeFetch } from './client.js';
 import type { Tour } from './types.js';
 
 export interface StatLeader {
@@ -70,7 +71,7 @@ export async function fetchAllStatCategories(tour: Tour): Promise<StatCategory[]
   }
 
   try {
-    const response = await fetch(
+    const response = await safeFetch(
       `https://site.web.api.espn.com/apis/site/v2/sports/golf/${tour}/statistics`
     );
 
