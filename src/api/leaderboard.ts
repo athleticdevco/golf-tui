@@ -188,103 +188,93 @@ function parseCompetitor(
 }
 
 export async function fetchEventLeaderboard(eventId: string, eventName: string, eventDate: string, tour: Tour = 'pga'): Promise<Leaderboard | null> {
-  try {
-    const dateStr = eventDate.slice(0, 10).replace(/-/g, '');
-    const response = await cachedApiRequest<ESPNLeaderboardResponse>(`/${tour}/scoreboard`, {
-      params: { dates: dateStr }
-    });
-    
-    if (!response.events || response.events.length === 0) {
-      return null;
-    }
+  const dateStr = eventDate.slice(0, 10).replace(/-/g, '');
+  const response = await cachedApiRequest<ESPNLeaderboardResponse>(`/${tour}/scoreboard`, {
+    params: { dates: dateStr }
+  });
 
-    // Find the specific event
-    const event = response.events.find(e => e.id === eventId) || response.events[0];
-    const competition = event.competitions?.[0];
-    
-    if (!competition) {
-      return null;
-    }
-
-    const statusState = event.status?.type?.state || 'post';
-    const status = statusState === 'in' ? 'in' : statusState === 'post' ? 'post' : 'pre';
-
-    const tournament: Tournament = {
-      id: event.id,
-      name: event.name,
-      shortName: event.shortName,
-      date: event.date,
-      endDate: event.endDate,
-      status,
-      tour,
-    };
-
-    const currentRound = competition.status?.period || 1;
-    const isPlayoff = currentRound > 4;
-
-    const entries: LeaderboardEntry[] = (competition.competitors || [])
-      .map((comp, index) => parseCompetitor(comp, index, currentRound, isPlayoff, status))
-      .filter((e): e is LeaderboardEntry => e !== null)
-      .sort((a, b) => a.positionNum - b.positionNum);
-
-    return {
-      tournament,
-      entries,
-      round: Math.min(currentRound, 4),
-      isPlayoff: isPlayoff || undefined,
-      lastUpdated: new Date().toISOString(),
-    };
-  } catch (error) {
-    console.error('Error fetching event leaderboard:', error);
+  if (!response.events || response.events.length === 0) {
     return null;
   }
+
+  // Find the specific event
+  const event = response.events.find(e => e.id === eventId) || response.events[0];
+  const competition = event.competitions?.[0];
+
+  if (!competition) {
+    return null;
+  }
+
+  const statusState = event.status?.type?.state || 'post';
+  const status = statusState === 'in' ? 'in' : statusState === 'post' ? 'post' : 'pre';
+
+  const tournament: Tournament = {
+    id: event.id,
+    name: event.name,
+    shortName: event.shortName,
+    date: event.date,
+    endDate: event.endDate,
+    status,
+    tour,
+  };
+
+  const currentRound = competition.status?.period || 1;
+  const isPlayoff = currentRound > 4;
+
+  const entries: LeaderboardEntry[] = (competition.competitors || [])
+    .map((comp, index) => parseCompetitor(comp, index, currentRound, isPlayoff, status))
+    .filter((e): e is LeaderboardEntry => e !== null)
+    .sort((a, b) => a.positionNum - b.positionNum);
+
+  return {
+    tournament,
+    entries,
+    round: Math.min(currentRound, 4),
+    isPlayoff: isPlayoff || undefined,
+    lastUpdated: new Date().toISOString(),
+  };
 }
 
 export async function fetchLeaderboard(tour: Tour): Promise<Leaderboard | null> {
-  try {
-    const response = await cachedApiRequest<ESPNLeaderboardResponse>(`/${tour}/scoreboard`);
-    
-    if (!response.events || response.events.length === 0) {
-      return null;
-    }
+  const response = await cachedApiRequest<ESPNLeaderboardResponse>(`/${tour}/scoreboard`);
 
-    const event = response.events[0];
-    const competition = event.competitions?.[0];
-    
-    if (!competition) {
-      return null;
-    }
-
-    const statusState = event.status?.type?.state || 'pre';
-    const status = statusState === 'in' ? 'in' : statusState === 'post' ? 'post' : 'pre';
-
-    const tournament: Tournament = {
-      id: event.id,
-      name: event.name,
-      shortName: event.shortName,
-      date: event.date,
-      endDate: event.endDate,
-      status,
-      tour,
-    };
-
-    const currentRound = competition.status?.period || 1;
-    const isPlayoff = currentRound > 4;
-
-    const entries: LeaderboardEntry[] = (competition.competitors || [])
-      .map((comp, index) => parseCompetitor(comp, index, currentRound, isPlayoff, status))
-      .filter((e): e is LeaderboardEntry => e !== null)
-      .sort((a, b) => a.positionNum - b.positionNum);
-
-    return {
-      tournament,
-      entries,
-      round: Math.min(currentRound, 4),
-      isPlayoff: isPlayoff || undefined,
-      lastUpdated: new Date().toISOString(),
-    };
-  } catch (error) {
-    console.error('Error fetching leaderboard:', error);
+  if (!response.events || response.events.length === 0) {
     return null;
   }
+
+  const event = response.events[0];
+  const competition = event.competitions?.[0];
+
+  if (!competition) {
+    return null;
+  }
+
+  const statusState = event.status?.type?.state || 'pre';
+  const status = statusState === 'in' ? 'in' : statusState === 'post' ? 'post' : 'pre';
+
+  const tournament: Tournament = {
+    id: event.id,
+    name: event.name,
+    shortName: event.shortName,
+    date: event.date,
+    endDate: event.endDate,
+    status,
+    tour,
+  };
+
+  const currentRound = competition.status?.period || 1;
+  const isPlayoff = currentRound > 4;
+
+  const entries: LeaderboardEntry[] = (competition.competitors || [])
+    .map((comp, index) => parseCompetitor(comp, index, currentRound, isPlayoff, status))
+    .filter((e): e is LeaderboardEntry => e !== null)
+    .sort((a, b) => a.positionNum - b.positionNum);
+
+  return {
+    tournament,
+    entries,
+    round: Math.min(currentRound, 4),
+    isPlayoff: isPlayoff || undefined,
+    lastUpdated: new Date().toISOString(),
+  };
 }
