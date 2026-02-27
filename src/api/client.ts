@@ -23,15 +23,22 @@ function configureInsecureTls(): void {
 /**
  * Wrapper around native fetch that:
  * - Bypasses TLS verification when GOLF_TUI_INSECURE=1 (for networks with SSL interception)
- * - Detects captive portal / proxy HTML responses and throws a clear error
+ * - Detects captive portal / geo-block HTML responses and throws a clear error
  * - Provides a descriptive error message for TLS certificate failures
  */
 export async function safeFetch(url: string | URL | Request, init?: RequestInit): Promise<Response> {
   configureInsecureTls();
 
+  // Default headers that help get past proxy filtering
+  const headers = {
+    'Accept': 'application/json',
+    'User-Agent': 'Mozilla/5.0 (compatible; GolfTUI/1.0)',
+    ...(init?.headers as Record<string, string>),
+  };
+
   let response: Response;
   try {
-    response = await fetch(url, init);
+    response = await fetch(url, { ...init, headers });
   } catch (error: any) {
     const msg = error?.cause?.code || error?.message || '';
     if (typeof msg === 'string' && msg.includes('UNABLE_TO_GET_ISSUER_CERT')) {
@@ -43,12 +50,12 @@ export async function safeFetch(url: string | URL | Request, init?: RequestInit)
     throw error;
   }
 
-  // Detect captive portal / proxy interception returning HTML instead of JSON
+  // Detect geo-block / captive portal interception returning HTML instead of JSON
   const contentType = response.headers.get('content-type') || '';
   if (response.ok && contentType.includes('text/html')) {
     throw new Error(
-      'Received an HTML page instead of JSON — a captive portal or proxy may be intercepting requests.\n' +
-      'Try opening a browser and completing any network login, then retry.'
+      'ESPN isn\'t available in your region.\n' +
+      'For live golf scores and stats, check out https://datagolf.com'
     );
   }
 
@@ -77,13 +84,7 @@ export async function apiRequest<T>(
     url += `?${searchParams.toString()}`;
   }
 
-  const response = await safeFetch(url, {
-    ...fetchOptions,
-    headers: {
-      'Content-Type': 'application/json',
-      ...fetchOptions.headers,
-    },
-  });
+  const response = await safeFetch(url, fetchOptions);
 
   if (!response.ok) {
     throw new Error(`API error: ${response.status} ${response.statusText}`);
